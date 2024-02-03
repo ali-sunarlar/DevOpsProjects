@@ -1,0 +1,48 @@
+#it shows animal
+animals:
+  #list of animals
+  -"dog"
+  -"bird"
+  -"cat"
+#finish
+#finish
+
+#Array Key-Value
+NGINX_PORT: 8080
+
+#JSON Key-Value
+#{
+#"All flowers amazing": true,
+#"Sea is a flower": true
+#}
+
+#YAML Key-Value
+All flowers are amazing: true
+Sea is a flower: true
+
+#String
+String:
+- Hello World
+- books
+- "Hello\nWorld!"
+
+
+conf: maxmemory 2mb
+
+#bir deger daha eklemek icin
+conf1: |
+  maxmemory 2mb
+  noeviction
+
+#Yanyana yazilmak istendiginde
+conf2: >
+  Hello
+  World!
+
+
+conf3: Hello World!
+
+conf4: |+
+ cluster-enabled yes
+
+

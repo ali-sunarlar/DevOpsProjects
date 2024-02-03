@@ -1,0 +1,58 @@
+all:
+  hosts:
+   test.local
+  children:
+   dbservers:
+    hosts:
+     db1.local
+     db2.local
+     test.local
+   webservers:
+    hosts:
+     web1.local
+     web2.local
+     test.local
+
+#Gruplandirma
+#What
+#Where
+#When
+
+
+  webservers1:
+   hosts:
+    webserver[1:50]
+    app[1:25:2].webapp.com #1 den 25'e kadar 2 ser olarak artar
+
+
+  rose:
+   ansible_port: 99
+   ansible_host: 192.168.1.100
+
+  webservers3:
+   hosts:
+    node1
+    node2
+  vars:
+   proxy: proxy.node.com
+   http_port: 443
+
+
+all2:
+children:
+ project:
+  children:
+   enviroments:
+    children:
+     testservers:
+      hosts:
+       test3.local
+       test4.local
+     prodservers:
+      hosts:
+       prod3.local
+       prod4.local
+   vars:
+    timeout: 60
+   requirements:
+      
