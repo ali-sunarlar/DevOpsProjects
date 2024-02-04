@@ -1,0 +1,170 @@
+#yaml dosyasi calistirmak icin
+#ansible-playbook xxx.yaml
+
+#tasklarin gecerli olup olmadiginin kontrolu icin. Playbook'un neler yapacagini gormek icin kullanilir. whatif benzeri
+#check-mode
+#diff-mode (before after goruntulenebilir)
+
+#ansible-playbook xxx.yaml --check --diff
+
+#parametre olarak
+#check_mode: yes/no
+#diff: no/yes
+
+#troublooshooting
+
+#baslamasi gereken task belirlenir. Hangi tasktan calisacagi belirlenir.
+#start-at-task
+#her task oncesi taskin calisip calismayacagini sorar
+#step mode
+
+#ansible-playbook xxx.yaml --start-at-task="install packages"
+#ansible-playbook xxx.yaml --step
+#y yes
+#n no
+#c bir daha sormadan calistirir
+
+#execution sirasinda debug.
+#Taskdaki degisiklikleri görebiliriz
+#bir degiskenin degerini set ederiz veya hangi degerini aldigini gorebiliriz. 
+#modul argumanlarinin update alip almadigi gorulur
+#default olarak disable'dır
+#always her zaman acar
+#never asla acmaz
+#on_failed fail durumda calistirir
+#on_unreachable erismezlik durumunda
+#on_skipped skip edildiginde calistirilir
+
+#ornek
+- name: Debugger example 1
+  hosts: all
+  tasks:
+   - name: Execute a command
+     ansible.builtin.command: "true"
+     debugger: on_failed
+   - name: Execute 2nd command
+     ansible.builtin.command: "true"
+     debugger: on_skipped
+
+#ornek child olan parent'i ezer. Ustte never verildi child'da true debug enable oldu
+- name : Debugger example 2
+  hosts: nodes
+  debugger: never
+  tasks:
+   - name: Execute a command
+     ansible.builtin.command: "false"
+     debugger: on_failed
+   - name: Execute 2nd command
+     ansible.builtin.command: "true"
+
+
+#Debugger Komutlari
+#Command                Shortcut      Action
+#print                  p             Task hakkindaki bilgileri yazar
+#task.args[key]=value   no shortcut   Module argumanini update eder
+#task.vars[key]=value   no shortcut   Task degiskenlerini update eder(update_task i kullanmak gerek)
+#update_task            u             Update edilen degiskenlerle taski yeniden olusturur
+#redo                   r             Taski yeniden calistirir
+#contunie               c             Diger taski baslatarak devam eder
+#quit                   q             Debuggerdan cikar
+
+#data2 yanlis verildi
+- name: Debugger Example 3
+  hosts: nodes
+  debugger: on_failed
+  gather_facts: no
+  vars:
+    data1: Hello
+  tasks:
+    - name: Variable example
+      ansible.builtin.ping: data={{ data2 }}
+
+#asagidaki komut ile argumanlar kontrol edilir.
+#p task.args
+#[192.168.1.101] TASK: Variable example (debug)> p task.args
+#{'data': '{{ data2 }}'}
+
+#ve yanlis verilen deger dogrusu ile degistilerek tekrar kontrol edilir. redo ile task yeniden calistirilir
+#task.args['data']='{{ data1 }}'
+
+#[192.168.1.102] TASK: Variable example (debug)> task.args['data']='{{ data1 }}'
+#[192.168.1.102] TASK: Variable example (debug)> redo
+#ok: [192.168.1.102]
+
+#PLAY RECAP ***************************************************************************************************************************************************************************************
+#192.168.1.101              :ok=1 changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+#192.168.1.102              :ok=1 changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+
+
+#Serial-Strategy Ornekleri
+
+#ansible-doc -t strategy -l
+#ansible-doc -t strategy linear
+
+#2 serli calistirir task'lari tamamladiktan sonra diger hostlara gecer
+- name: Serial Keyword Example 1
+  hosts: all
+  serial: 2
+  
+  #yuzde olarak
+  #serial: "50%"
+  
+  #ornek olarak 10 host varsa ilk 1 calistirir sonra kalan 9 icerisinde 3 sonra kalan 6 host icerisinde 5 host calistirilir.
+  #- 1
+  #- 3
+  #- 5
+
+  #yuzde olarak ilk %10 sonra %30 sonra %50
+  #- "10%"
+  #- "30%"
+  #- "50%"
+  
+  #hem yuzde hem de host sayisi belirtilebilir
+  #- 1
+  #- "30%"
+  #- 5
+
+  tasks:
+    - name: 1st task
+      command: "echo 1"
+    - name: 2nd task
+      command: "echo 2"
+
+#ignore ornekleri
+- name: Ignore Example
+  hosts: all
+  ignore_unreachable: yes
+  tasks:
+    - name: Execute&Fail&Fail ignored
+      ansible.builtin.command: /bin/true
+    - name: Execute&Fail&End
+      ansible.builtin.command: /bin/true
+      ignore_unreachable: no
+
+
+- name: Reboot Servers
+  hosts: nodes
+  become: true
+  become_method: sudo
+  tasks:
+    - name: Reboot Servers
+      command: /sbin/reboot
+      ignore_errors: true
+
+#paket kurulumu
+- name: Install wget
+  hosts: nodes
+  become: true
+  become_method: sudo
+  tasks:
+    - name: Install wget with yum
+      yum:
+        name: wget
+        state: present
+
+
+
+
+
+

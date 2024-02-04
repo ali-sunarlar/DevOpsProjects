@@ -1,0 +1,7 @@
+- name: Install wget
+  hosts: nodes
+  become: true
+  become_method: sudo
+  tasks:
+    - name: Install wget with yum
+      yum: name=wget state=installed

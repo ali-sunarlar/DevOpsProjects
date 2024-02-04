@@ -1,0 +1,7 @@
+- name: Install maven
+  hosts: nodes
+  tasks:
+    - name: Install maven with yum
+      yum:
+        name: maven
+        state: present

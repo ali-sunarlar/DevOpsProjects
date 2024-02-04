@@ -1,0 +1,7 @@
+- name: Install zip&unzip
+  hosts: all
+  tasks:
+    - name: Install zip
+      yum: name=zip state=latest
+    - name: Install unzip
+      yum: name=unzip state=latest

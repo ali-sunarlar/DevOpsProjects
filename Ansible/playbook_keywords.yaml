@@ -1,0 +1,135 @@
+#sudo, su gibi privilige method'larini belirtmek icin kullanilir
+#become_method
+
+#kullanici belirler
+#become_user
+
+#diff modu ile kullanilir. playbook'da neler degistigi gorulur
+#check_mode
+
+#roller, pluginler ve moduller icin namespace'ler yer alir
+#collections
+
+#taski calistirirken manage node'a nasil baglanilacagini belirler
+#connection
+
+#debug mode
+#debugger
+
+#sacece modullerde kullanilir. Ornek proxy icin
+#environment
+
+#host'lar icin playbooklarin otomatik olarak setup taskini calistiracagi zaman kullanilir
+#gather_facts
+
+#gather_facts icin time set eder
+#gather_timeout
+
+#playbook calisacagi host patterni
+#hosts
+
+#yüklemeye devam 
+#ignore_errors
+
+#
+#ignore_unreachable
+
+#playbook'lardaki ortak moduller
+#module_defaults
+
+#isimlendirme
+#name
+
+#host'lari belirli bir sira calistirmak icin
+#order
+#sorted alfabeye gore
+#shuffle
+#reverse_sorted ters alfabeye gore
+#reverse_invertory invertory'deki siranin tam tersi
+#hatalarda
+#ignore_errors
+#ignore_unreachable
+#any_errors_fatal
+
+
+#default port degistirilir
+#port
+
+
+#task section'i calistirildiktan calisir
+#post_tasks
+
+#task'lar once calistirilmasi icin
+#pre_tasks
+
+#tasklari calisma sirasi
+
+#1. pre_tasks
+#2. tasks
+#3. post_tasks
+
+#manage node'a baglanan user'dır
+#remote_user
+
+#play'e import edilen role listesi
+#roles
+
+#host'lari kaç tanesini calisacagi yuzdesel olarak belirlenir.
+#serial
+
+#hangi pluginin kullanilacagi belirlenir
+#strategy 
+
+#
+#tags
+
+#asil isi yapandir
+#tasks
+
+#zaman atanmasi
+#timeout
+
+#dictinoary ya da web olarak verilen degiskenler listesi
+#vars
+
+#vars degiskenlerinin tutuldugu dosya
+#vars_files
+
+#prompt icin kullanilan degiskenler
+#vars_prompt
+
+#log istenmiyorsa. Boolean bir keyword
+#no_log
+
+#kosul durumlarinda kullanilir
+#when
+
+#arguman eklemek icin
+#args
+
+#kosul durumlarinda
+#changed_when
+
+#uzak sunucularda veri cekerken vs kac sefer denecegi ne kadar surecegi until ve retries ile beraber kullanilir
+#delay
+
+#until
+
+#retries
+
+#task failed oldugunda veya olmadiginda kullanilir. Kosul durumu
+#failed_when
+
+#dongu
+#loop
+
+#
+#loop_control
+
+#
+#register
+
+
+
+
+

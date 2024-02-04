@@ -1,0 +1,88 @@
+#vault password'unu sormak icin
+#--ask-vault-password, --ask-vault-pass
+#ssh privilige icin kullanilir
+#--become-method
+ansible-doc -t become -l
+ansible.builtin.runas            Run As user
+ansible.builtin.su               Substitute User
+ansible.builtin.sudo             Substitute User DO
+ansible.netcommon.enable         Switch to elevated permissions on a network device
+community.general.doas           Do As user
+community.general.dzdo           Centrify's Direct Authorize
+community.general.ksu            Kerberos substitute user
+community.general.machinectl     Systemd's machinectl privilege escalation
+community.general.pbrun          PowerBroker run
+community.general.pfexec         profile based execution
+community.general.pmrun          Privilege Manager run
+community.general.sesu           CA Privileged Access Manager
+community.general.sudosu         Run tasks using sudo su -
+containers.podman.podman_unshare Run tasks using podman unshare
+
+#playbook calistirilirken hangi kullanici ile calistirilmasi gerektigi belirtilir.
+#--become-user
+
+#cache'i temizler
+#--flush-cache
+
+#bir task fail olsa bile calirtirmaya devam eder
+#--force-handlers
+
+#herhangi bir sey calistirmaz sadece host'lari listeler
+#--list-host
+
+#ansible all --list-host
+
+#tag'lari listelemek icin kullanilir
+#--list-tags
+
+#task'lari listeler
+#--list-tasks
+
+#baglanti saglarken
+#--private-key , --key-file
+
+#ortak argumanlar icin
+#ssh-common-args
+
+#playbook'u kontrol eder
+#--syntax-check
+
+#versiyon bilgisi
+#version
+
+#hangi kullanici gidiliyorsa onun parolasini sorar
+# -K , --ask-become-pass
+
+#
+# -T , --timeout
+
+#become ile islemleri gerceklestirmek icin kullanilir
+#-b, --become
+
+#connection tipini degistirilir
+#-c, connection
+
+#key-value, json veya yaml eklemek icin kullanilir
+#-e, --extra-vars
+
+#eszamanli calisma sayisini artirilir. default 5 node'dur
+#-f, --forks
+
+#help sayfasi
+#-h, --help
+
+# default'dan farkli path'deki invertory kullanilabilir
+# -i, --invertory, --invertory-file
+
+#connection password'u sorar
+# -k, --ask-pass
+
+#playbook'da verilen tag'lara göre 
+#-t, --tags
+
+#belirli user ile baglanti saglar
+#-u , --user
+
+#verbose mod
+#-v, --verbose
+

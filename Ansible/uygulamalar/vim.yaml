@@ -1,0 +1,9 @@
+- name: Install vim
+  hosts: nodes
+  become: true
+  become_method: sudo
+  vars:
+    package: vim
+  tasks:
+    - name: Install vim package with yum
+      yum: name={{ package }} state=latest
