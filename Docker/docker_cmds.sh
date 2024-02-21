@@ -211,3 +211,27 @@ docker container run -d -p 2020:80 httpd
 docker container run -d -p 3030:80 nginx
 
 docker container exec -it mssqldb1 /opt/mssql-tools/bin/sqlcmd -s localhost -U SA -P "Passw0rd!"
+docker container exec -it mariadb1 mariadb -u root -p bash
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
