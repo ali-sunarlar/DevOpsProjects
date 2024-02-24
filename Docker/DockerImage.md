@@ -4,49 +4,49 @@ Docker Image, birden cok katmanda olusan ve Docker container'da islem yapmak ici
 
 Container'lar yazilabilir katmana sahip dosyalarken, image'lar sadece okunabilir dosyalardir.
 
-## list
+### list
 
 docker image ls
 
-## download image
+### download image
 
 docker image pull python
 
-## personal image download
+### personal image download
 
 docker image pull docker.io/alisunarlar/helloworld
 
-## docker run alisunarlar/helloworld
+### docker run alisunarlar/helloworld
 
 docker container run -d 8080:80 alisunarlar/helloworld
 
-## busy iceren image'lar
+### busy iceren image'lar
 
 docker search busy
 
-## dockerhub uzerindeki image'lar icin
+### dockerhub uzerindeki image'lar icin
 
 docker search alisunarlar
 
-## detaylarina bakma
+### detaylarina bakma
 
 docker image python:latest
 
-## docker image silme 
+### docker image silme 
 
 docker image rm python:latest
 
-## kullanilmayan tum image'larin silinmesi icin
+### kullanilmayan tum image'larin silinmesi icin
 
 docker image prune
 
-## container'dan image olusturma icin
+### container'dan image olusturma icin
 
 docker container commit container-name image-name
 
 docker container commit container-name
 
-## Iamge icin etiketleme islemi
+### Iamge icin etiketleme islemi
 
 ##none tag
 
@@ -58,12 +58,12 @@ docker image tag image-id target-image-name
 
 docker image tag alisunarlar/helloworld alisunarlar/merhabadunya
 
-## history
+### history
 
 docker image history alisunarlar/helloworld
 
 
-#### example
+### example
 
 docker container run -d -p 7080:80 --name hello-world nginx
 
