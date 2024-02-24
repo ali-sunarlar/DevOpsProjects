@@ -1,3 +1,9 @@
+## Docker nedir ve container'dan farki nedir
+
+Docker Image, birden cok katmanda olusan ve Docker container'da islem yapmak icin olusturulmus dosyalardir.
+
+Container'lar yazilabilir katmana sahip dosyalarken, image'lar sadece okunabilir dosyalardir.
+
 ## list
 
 docker image ls
