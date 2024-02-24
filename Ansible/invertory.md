@@ -18,10 +18,10 @@ web1.local
 we2.local
 test.local
 
-# Gruplandirma
-# What
-# Where
-# When
+## Gruplandirma
+## What
+## Where
+## When
 
 
 [logserver]
@@ -70,7 +70,7 @@ ansible_port
 ansible_user
 ansible_password
 ansible_ssh_private_key_file
-ansible_become # sudo yetkisi
+ansible_become ## sudo yetkisi
 
 
 localhost
