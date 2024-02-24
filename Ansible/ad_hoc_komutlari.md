@@ -6,44 +6,44 @@ ansible all -a "/sbin{reboot}"
 
 ansible -m ping dbservers
 
-#f parametresi fork değeri 10'lu sunuculara bağlanir. Kaynak tuketimini artirir.
+# f parametresi fork değeri 10'lu sunuculara bağlanir. Kaynak tuketimini artirir.
 ansible -m ping all -f 10 -u ansible_user
 
-#-u parametresi farkli kullanici ile calistirir.
+# -u parametresi farkli kullanici ile calistirir.
 
-#yetkili islemler icin root gecisi
+# yetkili islemler icin root gecisi
 ansible -m ping all -f 10 -u ansible_user --become -K -ask-become-pass
 
 ansible all -m shell -a "echo Hello World"
 
-#dosya kopyalama
+# dosya kopyalama
 ansible nodes -m ansible.builtin.copy -a "src=/etc/hosts dest=/tmp/hosts"
 ansible nodes -m copy -a "dest=/tmp/devops.txt src=/tmp/devops.txt"
 
-#absent silme icin kullanilir.
+# absent silme icin kullanilir.
 ansible all -m file -a "dest=/tmp/devops.txt state=absent"
 
-#klasor kopyalama
+# klasor kopyalama
 ansible all -m copy -a "src=/tmp/devops dest=/opt/devops"
 
-#farkli bir yetkilendirme kullanarak
+# farkli bir yetkilendirme kullanarak
 ansible nodes -m file -a "dest=/opt/devops3 mode=777 state=directory"
 
-#farkli bir grup ve owner vererek kopyalama
+# farkli bir grup ve owner vererek kopyalama
 ansible nodes -m file -a "dest=/opt/devops3 owner=ansible mode=777 group=daemon state=directory"
 
 
 
-#present yoksa kurar varsa hiçbir şey yapmaz
+# present yoksa kurar varsa hiçbir şey yapmaz
 ansible all -m yum -a "name=nano state=present"
 ansible all -m ansible.builtin.yum -a "name=nano state=present"
 
-#state'ler
-#present şuanki
-#latest son versiyon
-#absent silme
-#installed yuklemek icin
-#removed kaldirmak icin
+# state'ler
+# present şuanki
+# latest son versiyon
+# absent silme
+# installed yuklemek icin
+# removed kaldirmak icin
 
 ansible all -m ansible.builtin.yum -a "name=nano state=removed"
 ansible all -m yum -a "name=nano state=removed"
@@ -54,7 +54,7 @@ ansible all -m yum -a "name=nano state=installed"
 ansible nodes -m user -a "name=ansible_user state=present"
 ansible nodes -m ansible.builtin.user -a "name=ansible_user state=present"
 
-#home dizini farkli path veriliyor
+# home dizini farkli path veriliyor
 ansible nodes -m ansible.builtin.user -a "name=devops state=present group=daemon home=/tmp/devops"
 
 ansible all -m group -a "name=nodes state=present"
