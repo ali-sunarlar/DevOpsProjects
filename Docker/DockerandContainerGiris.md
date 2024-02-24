@@ -220,7 +220,7 @@ docker container cp winkopyala2:install-docker-ce.ps1 install-docker-ce1.ps1
 
 
 
-##  --volume voluma baglamak icin
+###  --volume voluma baglamak icin
 
 kisaltmasi -v
 
