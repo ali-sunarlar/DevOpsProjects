@@ -12,11 +12,17 @@ https://docs.docker.com/engine/reference/builder
 Hangi image dosyanin referans alinacagi belirtilir
 
 FROM <image>:tag
+
 FROM python:2.7
+
 FROM centos:lates
+
 FROM microsoft/iis:nanoserver
+
 FROM mcr.microsoft.com/dotnet/framework/aspnet:latest
+
 FROM mcr.microsoft.com/windows/servercore:1607
+
 FROM mcr.microsoft.com/windows/servercore:1703
 
 
