@@ -216,9 +216,56 @@ docker container exec -it mariadb1 mariadb -u root -p bash
 
 
 
+#Konteyner Detaylarina Bakma - Arka Plan Izleme
+
+#container detaylarina goruntulame
+docker container inspect web 
+
+#filtreleme
+docker container inspect web | grep IpAddress
+
+#Kelime filtreleme icin
+docker container inspect --format "{{.NetworkSettings.IPAddress}}" web
+
+#port bilgisi
+docker container port web
+
+#uretilen loglari gorunteleme icin
+docker container logs web
+
+#container islemlerini gorunteleme icin
+docker container top web
+
+#container kaynak kullanimi goruntuleme
+docker container stats web
 
 
+#Container İçerisinde ASP.NET Uygulaması Çalıştırma
 
+#proje oluşturma
+dotnet new webapp
+
+#çalışıp çalışmadığının kontrolü
+dotnet watch run
+
+#
+docker container run -it -d -p 1000:80 --workdir /app `
+--volume C:\project\aspnetdocker\bin\Debug\netcoreapp3.1\publish:/app `
+mcr.microsoft.com/dotnet/core/aspnetapp dotnet aspnetdocker.dll
+
+docker container run -d -it -p 2000:80 --workdir C:\app\ `
+--volume C:\project\aspnetdocker\bin\Debug\netcoreapp3.1\publish:C:\app\ microsoft/aspnetcore `
+dotnet aspnetdocker.dll
+
+#log kontorolu icin
+docker container logs 20
+
+#Container içerisinde Node.js Uygulaması Çalıştırma
+docker container run -it --name nodejs -d -p 1111:8080 --workdir /nodejs `
+--volume C:\Project\nodejsdocker:/nodejs node:latest node server.js
+
+#Container İçerisinde Python Uygulaması Çalıştırma
+docker container run -it -w c:\app\ -v c:\project\pythondocker:c:\app python:3 myshortapp.py
 
 
 
