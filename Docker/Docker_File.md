@@ -135,3 +135,26 @@ EXPOSE 8080
 
 EXPOSE 80/udp
 
+### lABEL
+
+Image sahibi veya farkli meta data detayi eklemek icin kullanilir
+
+LABEL <key>=<value> <key>=<value>
+
+LABEL version="1.0"
+
+LABEL Developer <alisunarlar@gmail.com>
+
+LABEL Student <alisunarlar@gmail.com>
+
+
+### USER
+
+USER <user> [:<group>]
+
+USER ali[:IT]
+
+USER username
+
+
+
