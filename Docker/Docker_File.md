@@ -156,5 +156,125 @@ USER ali[:IT]
 
 USER username
 
+### ENV
 
+Container için ortam değişkenleri tanımlamak için kullanılmaktadır.
+
+ENV <key> <value>
+
+ENV LOG_DIR /var/log/apache
+
+ENV sifre birikiuc123
+
+ENV APP_PORT 8080
+
+### CMD
+
+Container oluşturulduğunda belirliten uygulamayı calıştırmak icin kullanilir
+
+CMD <komut>
+CMD ["executable","param1","param2"]
+CMD ["param1","param2"]
+CMD ["echo","MerhabaDunya",""]
+CMD ["python","demo.py"]
+CMD node server.js
+CMD ["dotnet","aspdoketnet.dll"]
+CMD c:\Apache24\bin\httpd.exe -w
+
+### ENTRYPOINT
+
+container olusturuldugunda varsayılan parametreleri tanımlamak ve calistirmak icin kullanilir
+
+ENTRYPOINT <path>
+
+ENTRYPOINT ["executable","param1","param2"]
+
+ENTRYPOINT ["echo","MerhabaDunya"]
+
+ENTRYPOINT ["node","server.js"]
+
+#### CMD ile beraber calistirilmasi
+
+ENTRYPOINT ["npm"]
+
+CMD ["start"]
+
+ENTRYPOINT ["python"]
+
+CMD ["main.py"]
+
+ENTYPOINT["ping"]
+
+CMD ["8.8.8.8","-c","3"]
+
+
+### Shell ve Exec 
+
+Shell ile Kullanım
+
+<instruction>   <commad>
+
+linux path -->      /bin/sh -c <command>
+
+Windows path -->    cmd /s /C <command>
+
+CMD echo "MerhabaDunya"
+
+RUN apt-get install pytho3 -y
+RUN mkdir -p /app
+CMD node /web-ping/app.js
+
+Exec ile Kullanim(Onerilen Yazim Sekli)
+
+<instruction>   ["executable","param1","param2",...]
+
+CMD ["/bin/echo","MerhabaDunya"]
+
+RUN ["apt-get","install","python3"]
+
+RUN ["mkdir","-p","/app"]
+
+CMD ["node","/web-ping/app.js"]
+
+
+
+### Example
+
+FROM ubuntu:latest
+
+LABEL Ali Sunarlar <alisunarlar@gmail.com>
+
+RUN apt-get update && apt-get install -y nginx 
+
+WORKDIR- /var/www/html
+
+COPY ..
+
+EXPOSE 80/tcp
+
+CMD ["nginx","- daeamon off"]
+
+### Exaple docker image olusturma
+
+Nokta(.) isaretini kullanarak icinde bulundugumuz klasordeki dockerfile dosyasinin derlenmesini saglamaktayiz.
+
+docker image build --tag hello-dockerfile .
+
+/opt/docker gibi docker file'nin tutuldugu dizin belirtilebilir.
+
+docker image build --tag hello-dockerfile /opt/docker .
+
+dockerhub'a gonderilecek sekilde image create etme
+
+docker image build --tag alisunarlar/hello-dockerfile /opt/docker .
+
+--tag kisaltmasi -t 'dir
+
+cache'deki veri cekilerek tekrar image olusturulabilir.
+
+docker image build  --tag hello-dockerfile-wcache .
+
+dockerfile ile olusturulmus image'dan container calistirma
+
+docker container run -dp 8080:80 hello-dockerfile
 
