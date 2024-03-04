@@ -221,7 +221,9 @@ Windows path -->    cmd /s /C <command>
 CMD echo "MerhabaDunya"
 
 RUN apt-get install pytho3 -y
+
 RUN mkdir -p /app
+
 CMD node /web-ping/app.js
 
 Exec ile Kullanim(Onerilen Yazim Sekli)
@@ -277,4 +279,47 @@ docker image build  --tag hello-dockerfile-wcache .
 dockerfile ile olusturulmus image'dan container calistirma
 
 docker container run -dp 8080:80 hello-dockerfile
+
+### .Dockerignore
+
+gitignore ile aynı mantıktadır.
+
+
+## RUN - CMD - ENTRYPOINT
+
+ENTRYPOINT ornegi 1
+
+FROM centos:latest
+
+ENTRYPOINT ["/bin/echo"]
+
+calıştırılırsa
+
+docker container run myimage 1 2 3
+
+output --> 123 olur
+
+ENTRYPOINT ornegi 2
+
+FROM centos:latest
+
+ENTRYPOINT ["/bin/echo" , "0"]
+
+calıştırılırsa
+
+```sh
+docker container run myimage 1 2 3
+```
+
+output --> 0123 olur
+
+
+CMD Ornegi
+
+FROM centos:latest
+
+ENV isim Ali Sunarlar
+
+CMD
+
 
