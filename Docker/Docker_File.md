@@ -301,9 +301,11 @@ output --> 123 olur
 
 ENTRYPOINT ornegi 2
 
+```dockerfile
 FROM centos:latest
 
 ENTRYPOINT ["/bin/echo" , "0"]
+```
 
 calıştırılırsa
 
