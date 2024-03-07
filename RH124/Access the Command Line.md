@@ -74,7 +74,7 @@ Sun Feb 27 08:32:42 PM EST 2022
 02/27/2022
 ```
 
-passwd seçenek almadan calistirilirsa varsayilan kullanicinin parolasini degistirir. Super kullanicilar diğer kulla
+passwd seçenek almadan calistirilirsa varsayilan kullanicinin parolasini degistirir. Super kullanicilar diğer kullacilarin parolasini degistirebilir.
 
 ```sh
 [user@host ~]$ passwd
