@@ -7,8 +7,17 @@ Here is a simple flow chart:
 
 ```mermaid
 graph TD;
-    /-->B;
-    /-->C;
-    /-->D;
-    /-->D;
+    /-->bin;
+    /-->boot;
+    /-->dev;
+    /-->etc;
+    /-->home;
+    /-->root;
+    /-->run;
+    /-->sbin;
+    /-->tmp;
+    /-->user;
+    /-->var;
+    home-->ali;
+    home-->users;
 ```
