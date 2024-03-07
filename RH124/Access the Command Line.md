@@ -1,24 +1,20 @@
 
 ## Introduction to the Bash Shell
 
-The shell displays a string when it is waiting for user input, called the shell prompt. When a regular
-user starts a shell, the prompt includes an ending dollar ($) character:
+shell regular user'da ($) karakteri bulunur
 
 ```sh
 [user@host ~]$
 ```
 
-A hash (#) character replaces the dollar ($) character when the shell is running as the superuser,
-root. This character indicates that it is a superuser shell, which helps to avoid mistakes that can
-affect the whole system.
+super user'da ise (#) karakteri bulunur
 
 ```sh
 [root@host ~]#
 ```
 
 
-In this example, a user with a shell prompt on the machine host uses ssh to log in to the remote
-Linux system remotehost as the user remoteuser:
+uzak bir sunucuya ssh baglantisinin yapilmasi
 
 ```sh
 [user@host ~]$ ssh remoteuser@remotehost
@@ -26,16 +22,14 @@ remoteuser@remotehost's password: password
 [remoteuser@remotehost ~]$
 ```
 
-option is used to specify the user's private key file, which is mylab.pem. The matching public key
-is already set up as an authorized key in the remoteuser account.
+public key ile ssh baglantisinin yapilmasi
 
 ```sh
 [user@host ~]$ ssh -i mylab.pem remoteuser@remotehost
 [remoteuser@remotehost ~]$
 ```
 
-When you first log in to a new machine, you are prompted with a warning from ssh
-that it cannot establish the authenticity of the host:
+public key ile ssh baglantisi ilk defa yapildiginda uyarı alinir
 
 ```sh
 [user@host ~]$ ssh -i mylab.pem remoteuser@remotehost
@@ -49,7 +43,7 @@ Are you sure you want to continue connecting (yes/no)? yes
 
 ### Basic Command Syntax
 
- The command output is displayed before the following shell prompt appears.
+
 
 ```sh
 [user@host ~]$ whoami
@@ -57,8 +51,7 @@ user
 [user@host ~]$
 ```
 
-To type more than one command on a single line, use the semicolon (;) as a command separator.
-The following example shows how to combine two commands (command1 and command2) on the command line.
+Tek satirda birden fazla komut yazmak icin, komutlar (;) isareti ile birleştirilerek yazilabilir.
 
 
 ```sh
@@ -70,8 +63,7 @@ command2 output
 
 #### Write Simple Commands
 
-Use the plus sign (+) as an argument to
-specify a format string for the date command.
+data ile tarih ve saat goruntulenir. (+) işareti ile argüman alinarak farkli ciktilar elde edilebilir.
 
 ```sh
 [user@host ~]$ date
@@ -82,7 +74,16 @@ Sun Feb 27 08:32:42 PM EST 2022
 02/27/2022
 ```
 
+passwd seçenek almadan calistirilirsa varsayilan kullanicinin parolasini degistirir. Super kullanicilar diğer kulla
 
+```sh
+[user@host ~]$ passwd
+Changing password for user user.
+Current password: old_password
+New password: new_password
+Retype new password: new_password
+passwd: all authentication tokens updated successfully.
+```
 
 
 
