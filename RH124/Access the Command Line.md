@@ -206,12 +206,12 @@ directory        dosya1     dosya11  dosya13  dosya15  dosya17  dosya19  dosya20
 
 Useful Command-line Editing Shortcuts
 
-| Shortcut | Description|
+| Shortcut | Description    |
 |--|--|--|
-|Ctrl+A |Jump to the beginning of the command line.|
-|Ctrl+E |Jump to the end of the command line.|
-|Ctrl+U |Clear from the cursor to the beginning of the command line.|
-|Ctrl+K |Clear from the cursor to the end of the command line.|
-|Ctrl+LeftArrow |Jump to the beginning of the previous word on the command line.|
-|Ctrl+RightArrow |Jump to the end of the next word on the command line.|
-|Ctrl+R |Search the history list of commands for a pattern.|
+|   Ctrl+A  |   Jump to the beginning of the command line. |
+|   Ctrl+E  |   Jump to the end of the command line.   |
+|   Ctrl+U  |   Clear from the cursor to the beginning of the command line.    |
+|   Ctrl+K  |   Clear from the cursor to the end of the command line.  |
+|   Ctrl+LeftArrow  |   Jump to the beginning of the previous word on the command line.    |
+|   Ctrl+RightArrow |   Jump to the end of the next word on the command line. |
+|   Ctrl+R  |   Search the history list of commands for a pattern. |
