@@ -3,12 +3,12 @@
 
 ## Describe Linux File System Hierarchy Concepts
 
-The File-system Hierarchy chart:
+Here is a simple flow chart:
 
 ```mermaid
 graph TD;
-    -->bin;
-    -->boot;
-    -->dev;
-    -->etc;
+    /-->B;
+    /-->C;
+    /-->D;
+    /-->D;
 ```
