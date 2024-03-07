@@ -45,4 +45,44 @@ Are you sure you want to continue connecting (yes/no)? yes
 [remoteuser@remotehost ~]$
 ```
 
+## Execute Commands with the Bash Shell
+
+### Basic Command Syntax
+
+ The command output is displayed before the following shell prompt appears.
+
+```sh
+[user@host ~]$ whoami
+user
+[user@host ~]$
+```
+
+To type more than one command on a single line, use the semicolon (;) as a command separator.
+The following example shows how to combine two commands (command1 and command2) on the command line.
+
+
+```sh
+[user@host ~]$ command1 ; command2
+command1 output
+command2 output
+[user@host ~]$
+```
+
+#### Write Simple Commands
+
+Use the plus sign (+) as an argument to
+specify a format string for the date command.
+
+```sh
+[user@host ~]$ date
+Sun Feb 27 08:32:42 PM EST 2022
+[user@host ~]$ date +%R
+20:33
+[user@host ~]$ date +%x
+02/27/2022
+```
+
+
+
+
 
