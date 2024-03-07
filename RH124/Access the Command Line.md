@@ -72,6 +72,8 @@ Sun Feb 27 08:32:42 PM EST 2022
 20:33
 [user@host ~]$ date +%x
 02/27/2022
+[root@rocky2 user]# date +%R
+22:35
 ```
 
 passwd secenek almadan calistirilirsa varsayilan kullanicinin parolasini degistirir. Super kullanicilar diğer kullacilarin parolasini degistirebilir.
@@ -216,3 +218,7 @@ Useful Command-line Editing Shortcuts
 |   Ctrl+LeftArrow  |   Jump to the beginning of the previous word on the command line.    |
 |   Ctrl+RightArrow |   Jump to the end of the next word on the command line. |
 |   Ctrl+R  |   Search the history list of commands for a pattern. |
+
+
+
+
