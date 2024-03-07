@@ -179,6 +179,7 @@ Bir komutu birden fazla satira yazmak icin ters egik cizgi karakterini (\) kulla
 
 history, onceden calistirilmis komutlarin listesini goruntuler
 
+```sh
 [user@host ~]$ history
 ...output omitted...
  23 clear
@@ -200,7 +201,7 @@ directory        dosya1     dosya11  dosya13  dosya15  dosya17  dosya19  dosya20
 ls
 consultant1.txt  Documents  dosya10  dosya12  dosya14  dosya16  dosya18  dosya2   dosya3  dosya5  dosya7  dosya9      klasor  test1
 directory        dosya1     dosya11  dosya13  dosya15  dosya17  dosya19  dosya20  dosya4  dosya6  dosya8  hostbackup  test    yum.conf
-
+```
 
 ### Edit the Command Line
 
