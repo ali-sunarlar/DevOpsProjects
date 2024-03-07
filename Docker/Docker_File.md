@@ -289,6 +289,7 @@ gitignore ile aynı mantıktadır.
 
 ENTRYPOINT ornegi 1
 
+```
 FROM centos:latest
 
 ENTRYPOINT ["/bin/echo"]
@@ -303,7 +304,6 @@ ENTRYPOINT ornegi 2
 
 ```dockerfile
 FROM centos:latest
-
 ENTRYPOINT ["/bin/echo" , "0"]
 ```
 
