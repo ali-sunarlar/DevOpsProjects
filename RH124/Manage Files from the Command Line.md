@@ -22,4 +22,20 @@ graph TD;
     home-->users;
 ```
 
+### Describe Linux File System Hierarchy
+
+File System Hierarchy Standard
+
+Dosyalarin ve dizinlerin nasil organize edildigi. Hangi dizinin altında neler saklandigi ve saklanabilecegi bu standartda belirlenir.
+
+### Significant Red Hat Enterprise Linux Directories
+
+#### root
+
+Root kullanıcısınn home dizinidir.
+
+#### Home
+
+Oluşturulan kullanicilarin default home dizinidir.
+
 
