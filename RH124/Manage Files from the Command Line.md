@@ -244,8 +244,8 @@ Cd ..
 The ls command has multiple options for displaying attributes on files. The most common options
 are 
 -l (long listing format), 
--a (all files, including hidden files), and 
--R (recursive, to include  the contents of all subdirectories).
+-a (all files, including hidden files), and gizli dosyalari da goruntuler
+-R (recursive, to include  the contents of all subdirectories). alt klasorleri de icerir
 
 
 ```sh
@@ -328,6 +328,30 @@ total 0
 total 0
 [root@rocky2 ~]#
 ```
+
+multiple folder oluşturma
+
+```sh
+[root@rocky2 Documents]# mkdir ProjectX ProjectY ProjectZ
+[root@rocky2 Documents]# ls -la
+total 4
+drwxr-xr-x. 5 root root   54 Mar  9 00:12 .
+dr-xr-x---. 9 root root 4096 Mar  8 23:17 ..
+drwxr-xr-x. 2 root root    6 Mar  9 00:12 ProjectX
+drwxr-xr-x. 2 root root    6 Mar  9 00:12 ProjectY
+drwxr-xr-x. 2 root root    6 Mar  9 00:12 ProjectZ
+[root@rocky2 Documents]#  mkdir -p Thesis/Chapter1 Thesis/Chapter2 Thesis/Chapter3
+[root@rocky2 Documents]# ls -R Thesis/
+Thesis/:
+Chapter1  Chapter2  Chapter3
+
+Thesis/Chapter1:
+
+Thesis/Chapter2:
+
+Thesis/Chapter3:
+```
+
 
 #### cp
 
@@ -456,4 +480,115 @@ removed 'thesis_chapter2.odf'
 [root@rocky2 Documents]#
 ```
 
+## Make Links Between Files
 
+Aynı dosyayı işaret eden dosyalardır. Hard link ve soft link olarak ikiye ayrılır
+
+### Manage Links Between Files
+
+
+#### Create Symbolic Links
+
+Master silindiğinde symbolic(soft) link'e ulaşılamaz
+
+```sh
+[root@rocky2 Documents]# ln -s dosya1.txt dosya1_symlink.txt
+[root@rocky2 Documents]# ls -la
+total 4
+drwxr-xr-x. 6 root root  185 Mar  9 00:23 .
+dr-xr-x---. 9 root root 4096 Mar  8 23:17 ..
+lrwxrwxrwx. 1 root root   10 Mar  9 00:23 dosya1_symlink.txt -> dosya1.txt
+-rw-r--r--. 1 root root    0 Mar  9 00:17 dosya1.txt
+-rw-r--r--. 1 root root    0 Mar  9 00:17 dosya2.txt
+-rw-r--r--. 1 root root    0 Mar  9 00:17 dosya3.txt
+-rw-r--r--. 1 root root    0 Mar  9 00:17 dosya4.txt
+-rw-r--r--. 1 root root    0 Mar  9 00:17 dosya5.txt
+drwxr-xr-x. 2 root root    6 Mar  9 00:12 ProjectX
+drwxr-xr-x. 2 root root    6 Mar  9 00:12 ProjectY
+drwxr-xr-x. 2 root root    6 Mar  9 00:12 ProjectZ
+drwxr-xr-x. 5 root root   54 Mar  9 00:13 Thesis
+[root@rocky2 Documents]# cat dosya1.txt
+helloworld
+[root@rocky2 Documents]# cat dosya1_symlink.txt
+helloworld
+[root@rocky2 Documents]# rm dosya1.txt
+rm: remove regular file 'dosya1.txt'? y
+[root@rocky2 Documents]# ls -la
+total 4
+drwxr-xr-x. 6 root root  166 Mar  9 00:28 .
+dr-xr-x---. 9 root root 4096 Mar  8 23:17 ..
+lrwxrwxrwx. 1 root root   10 Mar  9 00:23 dosya1_symlink.txt -> dosya1.txt
+-rw-r--r--. 1 root root    0 Mar  9 00:17 dosya2.txt
+-rw-r--r--. 1 root root    0 Mar  9 00:17 dosya3.txt
+-rw-r--r--. 1 root root    0 Mar  9 00:17 dosya4.txt
+-rw-r--r--. 1 root root    0 Mar  9 00:17 dosya5.txt
+drwxr-xr-x. 2 root root    6 Mar  9 00:12 ProjectX
+drwxr-xr-x. 2 root root    6 Mar  9 00:12 ProjectY
+drwxr-xr-x. 2 root root    6 Mar  9 00:12 ProjectZ
+drwxr-xr-x. 5 root root   54 Mar  9 00:13 Thesis
+[root@rocky2 Documents]# cat dosya1_symlink.txt
+cat: dosya1_symlink.txt: No such file or directory
+[root@rocky2 Documents]#
+```
+
+
+#### Create Hard Links
+
+ Hard link'teki master silinse bile linklere ulaşılabilir. Hard copy'ler diskte aynı blok'ta yer alır. En önemli avantajı da bu sayılabilir. 
+farklı hard linklerde güncelleme yapıldığında master'da da güncelleme yapılır. Hard link'ler birbirinden ayrı yetkilendirme yapılabilir. 
+
+```sh
+[root@rocky2 Documents]# ln dosya2.txt dosya2_hlink2.txt
+[root@rocky2 Documents]# ln dosya2.txt dosya2_hlink1.txt
+[root@rocky2 Documents]# vi dosya2.txt
+[root@rocky2 Documents]# cat dosya2.txt
+helloworld
+[root@rocky2 Documents]# cat dosya2_hlink2.txt
+helloworld
+[root@rocky2 Documents]# ls -la
+total 20
+drwxr-xr-x. 6 root root 4096 Mar  9 00:32 .
+dr-xr-x---. 9 root root 4096 Mar  8 23:17 ..
+lrwxrwxrwx. 1 root root   10 Mar  9 00:23 dosya1_symlink.txt -> dosya1.txt
+-rw-r--r--. 3 root root   11 Mar  9 00:31 dosya2_hlink1.txt
+-rw-r--r--. 3 root root   11 Mar  9 00:31 dosya2_hlink2.txt
+-rw-r--r--. 3 root root   11 Mar  9 00:31 dosya2.txt
+-rw-r--r--. 1 root root    0 Mar  9 00:17 dosya3.txt
+-rw-r--r--. 1 root root    0 Mar  9 00:17 dosya4.txt
+-rw-r--r--. 1 root root    0 Mar  9 00:17 dosya5.txt
+
+[root@rocky2 Documents]# vi dosya2_hlink1.txt
+[root@rocky2 Documents]# vi dosya2_hlink2.txt
+[root@rocky2 Documents]# cat dosya2.txt
+helloworld
+changed from hlink1
+changed from hlink2
+[root@rocky2 Documents]# rm -rf dosya2.txt
+[root@rocky2 Documents]# cat dosya2_hlink1.txt
+helloworld
+changed from hlink1
+changed from hlink2
+
+```
+
+
+## Match File Names with Shell Expansions
+
+### Command-line Expansions
+
+### Pattern Matching
+
+| Pattern | Matches    |
+|--|--|
+|* | Any string of zero or more characters. |
+|? | Any single character. |
+|[abc…] | Any one character in the enclosed class (between the square brackets). |
+| [!abc…] | Any one character not in the enclosed class. |
+| [^abc…] | Any one character not in the enclosed class. |
+| [[:alpha:]] | Any alphabetic character. |
+| [[:lower:]] | Any lowercase character. |
+| [[:upper:]] | Any uppercase character. |
+| [[:alnum:]] | Any alphabetic character or digit. |
+| [[:punct:]] | Any printable character that is not a space or alphanumeric. |
+| [[:digit:]] | Any single digit from 0 to 9. |
+| [[:space:]] | Any single white space character, which might include tabs, newlines, carriage returns, form feeds, or spaces. |
