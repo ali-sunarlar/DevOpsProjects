@@ -576,7 +576,7 @@ changed from hlink2
 
 ### Command-line Expansions
 
-### Pattern Matching
+#### Pattern Matching
 
 | Pattern | Matches    |
 |--|--|
@@ -592,3 +592,198 @@ changed from hlink2
 | [[:punct:]] | Any printable character that is not a space or alphanumeric. |
 | [[:digit:]] | Any single digit from 0 to 9. |
 | [[:space:]] | Any single white space character, which might include tabs, newlines, carriage returns, form feeds, or spaces. |
+
+```sh
+[root@rocky2 Documents]# mkdir glob; cd glob
+[root@rocky2 glob]# touch alpha bravo charlie delta echo able baker cast dog easy
+[root@rocky2 glob]# ll
+total 0
+-rw-r--r--. 1 root root 0 Mar  9 01:18 able
+-rw-r--r--. 1 root root 0 Mar  9 01:18 alpha
+-rw-r--r--. 1 root root 0 Mar  9 01:18 baker
+-rw-r--r--. 1 root root 0 Mar  9 01:18 bravo
+-rw-r--r--. 1 root root 0 Mar  9 01:18 cast
+-rw-r--r--. 1 root root 0 Mar  9 01:18 charlie
+-rw-r--r--. 1 root root 0 Mar  9 01:18 delta
+-rw-r--r--. 1 root root 0 Mar  9 01:18 dog
+-rw-r--r--. 1 root root 0 Mar  9 01:18 easy
+-rw-r--r--. 1 root root 0 Mar  9 01:18 echo
+```
+
+a ile baslayanlar
+
+```sh
+[root@rocky2 glob]# ls a*
+able  alpha
+```
+
+a icerenler
+
+```sh
+[root@rocky2 glob]# ls *a*
+able  alpha  baker  bravo  cast  charlie  delta  easy
+```
+
+a veya c ile baslayanlar
+
+```sh
+[root@rocky2 glob]# ls [ac]*
+able  alpha  cast  charlie
+```
+
+4 ve 3 karakterden oluşanlar
+
+```sh
+[root@rocky2 glob]# ls ????
+able  cast  easy  echo
+[root@rocky2 glob]# ls ???
+dog
+```
+
+a veya b veya c ile baslayanlar
+
+```sh
+[root@rocky2 glob]# ls [abc]*
+able  alpha  baker  bravo  cast  charlie
+```
+
+
+icerisinde 0 ile 9 arasında sayı icerenler
+
+```sh
+[root@rocky2 glob]# touch test{0..10}
+[root@rocky2 glob]# ll
+total 0
+-rw-r--r--. 1 root root 0 Mar  9 01:18 able
+-rw-r--r--. 1 root root 0 Mar  9 01:18 alpha
+-rw-r--r--. 1 root root 0 Mar  9 01:18 baker
+-rw-r--r--. 1 root root 0 Mar  9 01:18 bravo
+-rw-r--r--. 1 root root 0 Mar  9 01:18 cast
+-rw-r--r--. 1 root root 0 Mar  9 01:18 charlie
+-rw-r--r--. 1 root root 0 Mar  9 01:18 delta
+-rw-r--r--. 1 root root 0 Mar  9 01:18 dog
+-rw-r--r--. 1 root root 0 Mar  9 01:18 easy
+-rw-r--r--. 1 root root 0 Mar  9 01:18 echo
+-rw-r--r--. 1 root root 0 Mar  9 01:28 test0
+-rw-r--r--. 1 root root 0 Mar  9 01:28 test1
+-rw-r--r--. 1 root root 0 Mar  9 01:28 test10
+-rw-r--r--. 1 root root 0 Mar  9 01:28 test2
+-rw-r--r--. 1 root root 0 Mar  9 01:28 test3
+-rw-r--r--. 1 root root 0 Mar  9 01:28 test4
+-rw-r--r--. 1 root root 0 Mar  9 01:28 test5
+-rw-r--r--. 1 root root 0 Mar  9 01:28 test6
+-rw-r--r--. 1 root root 0 Mar  9 01:28 test7
+-rw-r--r--. 1 root root 0 Mar  9 01:28 test8
+-rw-r--r--. 1 root root 0 Mar  9 01:28 test9
+[root@rocky2 glob]# ls *[0-9]*
+test0  test1  test10  test2  test3  test4  test5  test6  test7  test8  test9
+```
+
+özel karakter aramak icin
+
+```sh
+ls \*
+```
+
+#### Tilde Expansion
+
+
+```sh
+[root@rocky2 glob]# echo ~root
+/root
+[root@rocky2 glob]# echo ~user
+/home/user
+[root@rocky2 glob]# echo ~/glob
+/root/glob
+[root@rocky2 glob]#
+```
+
+
+#### Brace Expansion
+
+
+```sh
+[root@rocky2 glob]# echo {Sunday,Monday,Tuesday,Wednesday}.log
+Sunday.log Monday.log Tuesday.log Wednesday.log
+[root@rocky2 glob]#  echo file{1..3}.txt
+file1.txt file2.txt file3.txt
+[root@rocky2 glob]# echo file{a..c}.txt
+filea.txt fileb.txt filec.txt
+[root@rocky2 glob]# echo file{a,b}{1,2}.txt
+filea1.txt filea2.txt fileb1.txt fileb2.txt
+[root@rocky2 glob]# echo file{a{1,2},b,c}.txt
+filea1.txt filea2.txt fileb.txt filec.txt
+[root@rocky2 glob]# mkdir ../RHEL{7,8,9}
+[root@rocky2 glob]# ls ../RHEL*
+../RHEL7:
+
+../RHEL8:
+
+../RHEL9:
+```
+
+
+
+#### Variable Expansion
+
+değişken atamları sunucu kapatılıp açılıncaya geçerlidir.
+
+```sh
+[root@rocky2 glob]# vi username.sh
+```
+
+```sh
+#!/bin/bash
+USERNAME=ali
+echo $USERNAME
+```
+
+```sh
+[root@rocky2 glob]# chmod +x username.sh
+[root@rocky2 glob]# ./username.sh
+ali
+```
+
+```sh
+[root@rocky2 glob]# USERNAME=operator
+[root@rocky2 glob]# echo $USERNAME
+operator
+[root@rocky2 glob]# USERNAME2=operator2
+[root@rocky2 glob]# echo ${USERNAME2}
+operator2
+```
+
+#### Command Substitution
+
+
+```sh
+[root@rocky2 glob]# echo Today is $(date +%A).
+Today is Saturday.
+[root@rocky2 glob]# echo The time is $(date +%M) minutes past $(date +%l%p).
+The time is 46 minutes past 1AM.
+```
+
+
+#### Protecting Arguments from Expansion
+
+```sh
+[root@rocky2 glob]# echo The value of $HOME is your home directory.
+The value of /root is your home directory.
+[root@rocky2 glob]#  echo The value of \$HOME is your home directory.
+The value of $HOME is your home directory.
+```
+
+
+```sh
+[root@rocky2 glob]# myhost=$(hostname -s); echo $myhost
+rocky2
+[root@rocky2 glob]# echo "***** hostname is ${myhost} *****"
+***** hostname is rocky2 *****
+
+[root@rocky2 glob]#  echo "Will variable $myhost evaluate to $(hostname -s)?"
+Will variable rocky2 evaluate to rocky2?
+[root@rocky2 glob]# echo 'Will variable $myhost evaluate to $(hostname -s)?'
+Will variable $myhost evaluate to $(hostname -s)?
+
+
+```
