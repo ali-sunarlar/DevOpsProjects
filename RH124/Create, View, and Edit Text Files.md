@@ -137,16 +137,25 @@ Command Line Modu
 
 Visual Modu bulunur
 
+
+
 • The u key undoes the most recent edit.
+
 • The x key deletes a single character.
+
 • The :w command writes (saves) the file and remains in command mode for more editing.
+
 • The :wq command writes (saves) the file and quits Vim.
+
 • The :q! command quits Vim, and discards all file changes since the last write.
 
 
 
+
 • Character mode : v
+
 • Line mode : Shift+v
+
 • Block mode : Ctrl+v
 
 
