@@ -131,32 +131,66 @@ drwxr-xr-x.  2 root root   54 Mar  8 23:15 Videos
 
 ### Edit Files with Vim
 
+Insert Modu
 
-Insert modu için klavyeden "i" tuşuna basilir çıkmak için ESC tuşuna basilir ve command line moduna geçilir. 
+Command Line Modu
 
-vi editor'den çıkmak :q! kaydetmeden kaydeterek çıkmak için :wq!
+Visual Modu bulunur
 
-:x ayrıca kaydederek kapatmak için de kullanilir
+• The u key undoes the most recent edit.
+• The x key deletes a single character.
+• The :w command writes (saves) the file and remains in command mode for more editing.
+• The :wq command writes (saves) the file and quits Vim.
+• The :q! command quits Vim, and discards all file changes since the last write.
 
-klavyeden V tuşuna basılırsa Visual mode'a geçilir ve imlecin hareketine göre seçim imkanı sunur
 
+
+• Character mode : v
+• Line mode : Shift+v
+• Block mode : Ctrl+v
+
+
+vim konfigurasyon dosyası
+
+cat ~/.vimrc
 
 
 ```
+Insert modu için klavyeden "i" tuşuna basilir çıkmak için ESC tuşuna basilir ve command line moduna geçilir. 
+klavyeden V tuşuna basılırsa Visual mode'a geçilir ve imlecin hareketine göre seçim imkanı sunar
+vi editor'den çıkmak :q! kaydetmeden kaydeterek çıkmak için :wq!
+:x ayrıca kaydederek kapatmak için de kullanilir
 ctrl + v kısayolu ile bulunduğu satırı seçer
 j ile satır değiştirebilirsiniz
 b ile kelimenin ilk harfine gidebilirsiniz
 :zz kaydet kapat anlamına gelir
 /'aramak istediğiniz kelime' yi yazarak dosya içerisinde arama yapabilirsiniz.
 arama içerisinde n tuşu ile bir sonraki bulunan kelimeye gidebilirsiniz.
+Dosyanın sonundan başına doğru bir arama yapmak istiyorsak
+?'aramak istenilen kelime' yi yazarak dosya içerisinde sondan başa doğru arama yapabilirsiniz
+Command mode'unda j tuşu imleç satırlar arası geçiş yapar
 klavyeden yy yaptığınız takdirde satırı kopyalayacaktır
 klavyeden dd yaptığınız takdirde satırı silecektir.
 klavyeden pp yaptığınız takdirde satırı yapıştıracaktır
+klavyeden gg yaptığınız takdirde satır dosyanın başına gider
 set number ile satırlara numara verecektir
 set nonumber ile satır numaralarını silebilrsiniz
 :split seçeneği ile alt kısımda başka bir txt dosyasını açacaktır
 :visplit seçeneği ile yan kısımda başka bir txt dosyasını açacaktır
 ayrıştırılmış vi pencerelerinde geçiş yapmak için ctrl+w tuş kombinasyonu kullanılır.
 :%s/değiştirmek istediğiniz kelime/yeni kelime tüm kelimeleri değiştirir
+:s/degistirilecek_kelime/yeni_kelime bulunduğu satırdaki kelimeleri degistirir
+:%s/degistilecek_kelime/yeni_kelime/10 ilk satirdaki kelimeleri degistirir
+:%s/degistilecek_kelime/yeni_kelime/g dosyanin icerisindeki butun kelimeleri degistirir
 :s/değiştirmek istediğiniz kelime/yeni kelime/g sadece imlecin bulunduğu satırdaki kelimeyi değiştirir.
+:set number command line modunda satır numaralarını gösterir
+:set nonumber command line modunda satır numaralarını kapatır
+:set syntax=on syntax hatalarınu vurgular
+:e gecilecek_dosya_path yeni dosyaya geçiş yapmak için
+
 ```
+
+
+
+
+
