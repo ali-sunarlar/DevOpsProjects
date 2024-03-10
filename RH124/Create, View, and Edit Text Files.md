@@ -32,8 +32,9 @@ Output Redirection Operators
 | &>>  | file Redirect stdout and stderr to append to the same file. |
 
 
-```sh
 
+```sh
+[root@rocky2 user]# cat /var/log/secure | grep 1345 > 1345.txt
 [root@rocky2 ~]# date > /tmp/saved-timestamp
 #Copy the last 100 lines from the /var/log/dmesg file to the /tmp/last-100-boot-messages file
 [root@rocky2 ~]#  tail -n 100 /var/log/dmesg > /tmp/last-100-boot-messages
@@ -44,6 +45,7 @@ Output Redirection Operators
 #Append a line to the existing /tmp/many-lines-of-information file.
 [root@rocky2 ~]# echo "new line of information" >> /tmp/many-lines-of-information
 #Redirect errors from the find command to the /tmp/errors file while viewing normal command output on the terminal
+[root@rocky2 user]# datet 2>error.txt
 [root@rocky2 ~]# find /etc -name passwd 2> /tmp/errors
 /etc/passwd
 /etc/pam.d/passwd
@@ -57,6 +59,23 @@ Output Redirection Operators
 [root@rocky2 ~]# find /etc -name passwd >> /tmp/all-message-output 2>&1
 
 ```
+
+ssh yapıldığında hata alınıyor ciktisini output dosyasına atan bash script
+
+```sh
+#!/bin/bash
+host=("host1" "host2" "host3" ... "host100")
+error_output="error.txt"
+
+>"$error_output"
+
+for host in "$(host[@])";do
+            echo "connection: $host"
+
+            ssh "$host" "commads" 2> "$hata_ciktisi"
+
+```
+
 #### Pipeline Examples
 
 çıktıyı ekranda bölümlendirerek görünlüleme ok tuşlarına basılarak sonuna doğru ilerlenebilir. q tuşuna basılarak çıkılır
@@ -196,7 +215,8 @@ ayrıştırılmış vi pencerelerinde geçiş yapmak için ctrl+w tuş kombinasy
 :set nonumber command line modunda satır numaralarını kapatır
 :set syntax=on syntax hatalarınu vurgular
 :e gecilecek_dosya_path yeni dosyaya geçiş yapmak için
-
+:set list satir sonundaki boşlukları görüntüler
+:set nolist satir sonundaki boşlukları görüntülemeyi kapatir
 ```
 
 
