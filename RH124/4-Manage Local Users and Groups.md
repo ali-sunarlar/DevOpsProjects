@@ -270,9 +270,26 @@ operator2 ALL=/sbin/useradd NOPASSWD:ALL
 
 ## Manage Local User Accounts
 
+### Create Users from the Command Line
 
 
 
+
+
+### Modify Existing Users from the Command Line
+
+
+|usermod options:|   Usage        |
+|--|--|
+| -a, --append | Use it with the -G option to add the secondary groups to the user's current set of group memberships instead of replacing the set of secondary groups with a new set. |
+| -c, --comment | COMMENT Add the COMMENT text to the comment field. |
+| -d, --home HOME_DIR | Specify a home directory for the user account. |
+| -g, --gid GROUP | Specify the primary group for the user account. |
+| -G, --groups | GROUPS Specify a comma-separated list of secondary groups for the user account. |
+|-L, --lock | Lock the user account. |
+| -m, --move-home | Move the user's home directory to a new location. You must use it with the -d option. |
+| -s, --shell | SHELL Specify a particular login shell for the user account. |
+| -U, --unlock | Unlock the user account. |
 
 
 
