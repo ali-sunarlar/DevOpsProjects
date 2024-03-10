@@ -221,5 +221,147 @@ ayrıştırılmış vi pencerelerinde geçiş yapmak için ctrl+w tuş kombinasy
 
 
 
+## Change the Shell Environment
+
+### Shell Variable Usage
+
+#### Assign Values to Variables
+
+Assign a value to a shell variable with the following syntax:
+```sh
+[root@rocky2 user]# VARIABLENAME=value
+```
+
+
+Variable names can contain uppercase or lowercase letters, digits, and the underscore character
+(_).
+
+```sh
+[root@rocky2 user]# COUNT=40
+[root@rocky2 user]# first_name=John
+[root@rocky2 user]# file1=/tmp/abc
+[root@rocky2 user]# _ID=RH123
+```
+
+You can use the set command to list all shell variables that are currently set.
+
+```sh
+[root@rocky2 user]#  set | less
+
+BASH=/bin/bash
+BASHOPTS=checkwinsize:cmdhist:complete_fullquote:expand_aliases:extquote:force_fignore:globasciiranges:histappend:hostcomplete:interactive_comments:progcomp:promptvars:sourcepath
+BASHRCSOURCED=Y
+BASH_ALIASES=()
+BASH_ARGC=([0]="0")
+BASH_ARGV=()
+BASH_CMDS=()
+BASH_LINENO=()
+.
+.
+.
+TERM=xterm-256color
+UID=0
+USER=root
+VARIABLENAME=value
+_=
+_ID=RH123
+colors=/root/.dircolors
+file1=/tmp/abc
+first_name=John
+which_declare='declare -f'
+which_opt=-f
+gawklibpath_append ()
+
+```
+
+#### Retrieve Values with Variable Expansion
+
+```sh
+#the following command sets the variable COUNT to 40.
+[root@rocky2 user]# COUNT=40
+#If you enter the echo COUNT command, then it prints the COUNT string.
+[root@rocky2 user]# echo COUNT
+COUNT
+#If you enter instead the echo $COUNT command, then it prints the value of the COUNT variable.
+[root@rocky2 user]# echo $COUNT
+40
+
+
+#You can also use a variable to refer to a long file name for multiple commands.
+[root@rocky2 user]# touch /tmp/tmp.z9pXW0HqcC
+[root@rocky2 user]# file1=/tmp/tmp.z9pXW0HqcC
+[root@rocky2 user]#  rm $file1
+rm: remove regular empty file '/tmp/tmp.z9pXW0HqcC'? y
+[root@rocky2 user]# ls -l $file1
+ls: cannot access '/tmp/tmp.z9pXW0HqcC': No such file or directory
+
+
+[root@rocky2 user]# echo Repeat $COUNTx
+Repeat
+[root@rocky2 user]# echo Repeat ${COUNT}x
+Repeat 40x
+```
+
+#### Configure Bash with Shell Variables
+
+The HISTFILESIZE variable
+specifies how many commands to save in that file from the history.
+
+The HISTTIMEFORMAT variable 
+defines the time stamp format for every command in the history.
+
+```sh
+[root@rocky2 user]# history
+    1  ip a
+    2  exit
+    3  id
+    4  pwd
+    5  echo $HOME
+    6  echo $PATH
+    .
+    .
+    .
+  579  touch /tmp/tmp.z9pXW0HqcC
+  580  ls -l $file1
+  581   rm $file1
+  582  ls -l $file1
+  583  echo Repeat $COUNTx
+  584  echo Repeat ${COUNT}x
+  585  history
+[root@rocky2 user]# HISTTIMEFORMAT="%F %T "
+[root@rocky2 user]# history
+    1  2024-03-09 07:43:27 ip a
+    2  2024-03-09 07:43:27 exit
+    3  2024-03-09 07:43:27 id
+    4  2024-03-09 07:43:27 pwd
+    5  2024-03-09 07:43:27 echo $HOME
+    6  2024-03-09 07:43:27 echo $PATH
+    7  2024-03-09 07:43:27 exit
+    8  2024-03-09 07:43:27 id
+    9  2024-03-09 07:43:27 pwd
+    .
+    .
+    .
+  579  2024-03-09 09:13:19 touch /tmp/tmp.z9pXW0HqcC
+  580  2024-03-09 09:13:21 ls -l $file1
+  581  2024-03-09 09:14:04  rm $file1
+  582  2024-03-09 09:14:13 ls -l $file1
+  583  2024-03-09 09:15:02 echo Repeat $COUNTx
+  584  2024-03-09 09:15:09 echo Repeat ${COUNT}x
+  585  2024-03-09 09:17:42 history
+  586  2024-03-09 09:17:52 HISTTIMEFORMAT="%F %T "
+  587  2024-03-09 09:17:55 history
+```
+
+
+
+
+
+
+
+
+
+
+
 
 
