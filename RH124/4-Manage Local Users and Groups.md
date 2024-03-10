@@ -273,8 +273,133 @@ operator2 ALL=/sbin/useradd NOPASSWD:ALL
 ### Create Users from the Command Line
 
 
+```sh
+[root@rocky2 ~]#  useradd --help
+Usage: useradd [options] LOGIN
+       useradd -D
+       useradd -D [options]
+
+Options:
+      --badname                 do not check for bad names
+  -b, --base-dir BASE_DIR       base directory for the home directory of the
+                                new account
+      --btrfs-subvolume-home    use BTRFS subvolume for home directory
+  -c, --comment COMMENT         GECOS field of the new account
+  -d, --home-dir HOME_DIR       home directory of the new account
+  -D, --defaults                print or change default useradd configuration
+  -e, --expiredate EXPIRE_DATE  expiration date of the new account
+  -f, --inactive INACTIVE       password inactivity period of the new account
+  -g, --gid GROUP               name or ID of the primary group of the new
+                                account
+  -G, --groups GROUPS           list of supplementary groups of the new
+                                account
+  -h, --help                    display this help message and exit
+  -k, --skel SKEL_DIR           use this alternative skeleton directory
+  -K, --key KEY=VALUE           override /etc/login.defs defaults
+  -l, --no-log-init             do not add the user to the lastlog and
+                                faillog databases
+  -m, --create-home             create the user's home directory
+  -M, --no-create-home          do not create the user's home directory
+  -N, --no-user-group           do not create a group with the same name as
+                                the user
+  -o, --non-unique              allow to create users with duplicate
+                                (non-unique) UID
+  -p, --password PASSWORD       encrypted password of the new account
+  -r, --system                  create a system account
+  -R, --root CHROOT_DIR         directory to chroot into
+  -P, --prefix PREFIX_DIR       prefix directory where are located the /etc/* files
+  -s, --shell SHELL             login shell of the new account
+  -u, --uid UID                 user ID of the new account
+  -U, --user-group              create a group with the same name as the user
+  -Z, --selinux-user SEUSER     use a specific SEUSER for the SELinux user mapping
+
+```
+
+The /etc/login.defs file sets some of the default options for user accounts, such as the range
+of valid UID numbers and default password aging rules.
+
+(kullanıcı, grup ve system kullanıcılarının id tanımlarının bulunduğu. Home dizininde hangi yetkinin default olarak atanacağı. Password yaşı ile alakalı bilgiler yer alır. Kullanici şifre algoritmaları  ). Bu dosyadaki değişiklikler varolan kullanıcıları etkilemez yeni oluşturulanlar için geçerli olur.
+
+```sh
+[root@rocky2 ~]# vi /etc/login.defs
+# HOME_MODE is used by useradd(8) and newusers(8) to set the mode for new
+# home directories.
+# If HOME_MODE is not set, the value of UMASK is used to create the mode.
+HOME_MODE       0700
+.
+.
+.
+# Password aging controls:
+#
+#       PASS_MAX_DAYS   Maximum number of days a password may be used.
+#       PASS_MIN_DAYS   Minimum number of days allowed between password changes.
+#       PASS_MIN_LEN    Minimum acceptable password length.
+#       PASS_WARN_AGE   Number of days warning given before a password expires.
+#
+PASS_MAX_DAYS   99999
+PASS_MIN_DAYS   0
+PASS_WARN_AGE   7
+.
+.
+.
+#
+# Min/max values for automatic uid selection in useradd(8)
+#
+UID_MIN                  1000
+UID_MAX                 60000
+# System accounts
+SYS_UID_MIN               201
+SYS_UID_MAX               999
+# Extra per user uids
+SUB_UID_MIN                100000
+SUB_UID_MAX             600100000
+SUB_UID_COUNT               65536
+
+#
+# Min/max values for automatic gid selection in groupadd(8)
+#
+GID_MIN                  1000
+GID_MAX                 60000
+# System accounts
+SYS_GID_MIN               201
+SYS_GID_MAX               999
+# Extra per user group ids
+SUB_GID_MIN                100000
+SUB_GID_MAX             600100000
+SUB_GID_COUNT               65536
+.
+.
+.
+#
+# If set to MD5, MD5-based algorithm will be used for encrypting password
+# If set to SHA256, SHA256-based algorithm will be used for encrypting password
+# If set to SHA512, SHA512-based algorithm will be used for encrypting password
+# If set to BLOWFISH, BLOWFISH-based algorithm will be used for encrypting password
+# If set to DES, DES-based algorithm will be used for encrypting password (default)
+#
+ENCRYPT_METHOD SHA512
+
+```
+
+User Create
 
 
+```sh
+#description ile user oluşturma
+[root@rocky2 ~]#  useradd -c "operator user" operator4
+[root@rocky2 ~]# passwd operator4
+Changing password for user operator4.
+New password:
+BAD PASSWORD: The password is shorter than 8 characters
+Retype new password:
+passwd: all authentication tokens updated successfully.
+```
+
+Kullanıcı bir sonraki girişinde parola değiştirmesi sağlanır. 0 hemen ilk login 2. loginden sonra veya  5. loginden parola değiştirmesi zorlanabilir. 
+```sh
+[root@rocky2 ~]# change -d 0 operator4
+[root@rocky2 ~]# change -d 2 operator4
+```
 
 ### Modify Existing Users from the Command Line
 
@@ -290,6 +415,264 @@ operator2 ALL=/sbin/useradd NOPASSWD:ALL
 | -m, --move-home | Move the user's home directory to a new location. You must use it with the -d option. |
 | -s, --shell | SHELL Specify a particular login shell for the user account. |
 | -U, --unlock | Unlock the user account. |
+
+
+
+### Delete Users from the Command Line
+
+"userdel -r" kullanıcıyı passwd dosyasından siler ve kullanıcının home dizinine de siler.
+
+userdel -r seçeneğini belirtmeden bir kullanıcıyı kaldırdığınızda, kullanıcının dosyaları
+artık atanmamış bir UID'ye aittir. Bir kullanıcı oluşturursanız ve bu kullanıcıya atanırsa
+silinen kullanıcının UID'si, yeni hesap bu dosyalara sahip olacaktır; bu bir güvenlik önlemidir
+risk. Tipik olarak, kuruluş güvenlik politikaları kullanıcı hesaplarının silinmesine izin vermez ve
+bunun yerine bu senaryoyu önlemek için bunların kullanılmasını kilitleyin
+
+
+```sh
+[root@rocky2 ~]#  useradd -c "operator user" operator4
+[root@rocky2 ~]# ls -l /home
+total 4
+drwx------. 4 ansible     ansible         111 Mar  3 04:29 ansible
+drwx------. 2 consultant1 consultant1      83 Feb 28 03:16 consultant1
+drwx------. 2 consultant2 consultant2      62 Feb 28 01:00 consultant2
+drwx------. 2 consultant3 consultant3      62 Feb 28 01:00 consultant3
+drwxrwx---. 2 consultant1 consultants      29 Feb 28 03:18 consultants
+drwx------. 2 database1   databaseadmins   83 Feb 28 04:00 database1
+drwx------. 2 operator1   operator1        83 Feb 28 02:09 operator1
+drwx------. 3 operator2   operator2        95 Mar  2 15:16 operator2
+drwx------. 2 operator3   operator3        62 Feb 28 00:22 operator3
+drwx------. 2 operator4   operator4        62 Mar  9 17:02 operator4
+drwx------. 3 production1 production1      74 Mar  2 15:30 production1
+[root@rocky2 ~]# userdel operator4
+[root@rocky2 ~]# ls -l /home
+total 4
+drwx------. 4 ansible     ansible         111 Mar  3 04:29 ansible
+drwx------. 2 consultant1 consultant1      83 Feb 28 03:16 consultant1
+drwx------. 2 consultant2 consultant2      62 Feb 28 01:00 consultant2
+drwx------. 2 consultant3 consultant3      62 Feb 28 01:00 consultant3
+drwxrwx---. 2 consultant1 consultants      29 Feb 28 03:18 consultants
+drwx------. 2 database1   databaseadmins   83 Feb 28 04:00 database1
+drwx------. 2 operator1   operator1        83 Feb 28 02:09 operator1
+drwx------. 3 operator2   operator2        95 Mar  2 15:16 operator2
+drwx------. 2 operator3   operator3        62 Feb 28 00:22 operator3
+drwx------. 2        1016           1016   62 Mar  9 17:02 operator4
+drwx------. 3 production1 production1      74 Mar  2 15:30 production1
+drwx------. 3 student     student         103 Mar  6 21:29 student
+[root@rocky2 ~]# useradd -u 1016 operator5
+[root@rocky2 ~]# ls -l /home
+total 4
+drwx------. 4 ansible     ansible         111 Mar  3 04:29 ansible
+drwx------. 2 consultant1 consultant1      83 Feb 28 03:16 consultant1
+drwx------. 2 consultant2 consultant2      62 Feb 28 01:00 consultant2
+drwx------. 2 consultant3 consultant3      62 Feb 28 01:00 consultant3
+drwxrwx---. 2 consultant1 consultants      29 Feb 28 03:18 consultants
+drwx------. 2 database1   databaseadmins   83 Feb 28 04:00 database1
+drwx------. 2 operator1   operator1        83 Feb 28 02:09 operator1
+drwx------. 3 operator2   operator2        95 Mar  2 15:16 operator2
+drwx------. 2 operator3   operator3        62 Feb 28 00:22 operator3
+drwx------. 2 operator5   operator5        62 Mar  9 17:02 operator4
+drwx------. 2 operator5   operator5        62 Mar  9 18:04 operator5
+drwx------. 3 production1 production1      74 Mar  2 15:30 production1
+drwx------. 3 student     student         103 Mar  6 21:29 student
+[root@rocky2 ~]# userdel -r operator5
+[root@rocky2 ~]# ls -l /home
+total 4
+drwx------. 4 ansible     ansible         111 Mar  3 04:29 ansible
+drwx------. 2 consultant1 consultant1      83 Feb 28 03:16 consultant1
+drwx------. 2 consultant2 consultant2      62 Feb 28 01:00 consultant2
+drwx------. 2 consultant3 consultant3      62 Feb 28 01:00 consultant3
+drwxrwx---. 2 consultant1 consultants      29 Feb 28 03:18 consultants
+drwx------. 2 database1   databaseadmins   83 Feb 28 04:00 database1
+drwx------. 2 operator1   operator1        83 Feb 28 02:09 operator1
+drwx------. 3 operator2   operator2        95 Mar  2 15:16 operator2
+drwx------. 2 operator3   operator3        62 Feb 28 00:22 operator3
+drwx------. 2        1016           1016   62 Mar  9 17:02 operator4
+drwx------. 3 production1 production1      74 Mar  2 15:30 production1
+drwx------. 3 student     student         103 Mar  6 21:29 student
+
+```
+
+
+#### Set Passwords from the Command Line
+
+UID Ranges
+Red Hat Enterprise Linux uses specific UID numbers and ranges of numbers for specific purposes.
+
+• UID 0 : The superuser (root) account UID.
+
+• UID 1-200 : System account UIDs statically assigned to system processes.
+
+• UID 201-999 : UIDs assigned to system processes that do not own files on this system. Software that requires an unprivileged UID is dynamically assigned UID from this available pool.
+
+• UID 1000+ : The UID range to assign to regular, unprivileged users.
+
+
+
+## Manage Local Group Accounts
+
+### Manage Local Groups
+
+
+
+```sh
+[root@rocky2 ~]# groupadd -g 10000 group01
+[root@rocky2 ~]# tail /etc/group
+techdocs:x:35002:tech1,tech2
+tech1:x:1010:
+tech2:x:1011:
+databaseadmins:x:35003:
+Students:x:35004:student
+student:x:1013:
+productions:x:35005:production1
+production1:x:1014:
+ansible:x:1015:
+group01:x:10000:
+#system grubu oluşturmak için
+[root@rocky2 ~]# groupadd -r group02
+[root@rocky2 ~]# tail /etc/group
+tech1:x:1010:
+tech2:x:1011:
+databaseadmins:x:35003:
+Students:x:35004:student
+student:x:1013:
+productions:x:35005:production1
+production1:x:1014:
+ansible:x:1015:
+group01:x:10000:
+group02:x:991:
+
+```
+
+#### Change Group Membership from the Command Line
+
+
+Use the usermod -g command to change a user's primary group.
+
+Use the usermod -aG command to add a user to a secondary group.
+
+```sh
+[root@rocky2 ~]# usermod -g group01 operator1
+[root@rocky2 ~]# usermod -g group02 operator2
+[root@rocky2 ~]# id operator1
+uid=1001(operator1) gid=10000(group01) groups=10000(group01),30000(operators),30001(admin)
+[root@rocky2 ~]# id operator2
+uid=1002(operator2) gid=991(group02) groups=991(group02),30000(operators)
+[root@rocky2 ~]# usermod -aG group01 operator2
+[root@rocky2 ~]# usermod -aG group02 operator1
+[root@rocky2 ~]# id operator2
+uid=1002(operator2) gid=991(group02) groups=991(group02),30000(operators),10000(group01)
+[root@rocky2 ~]# id operator1
+uid=1001(operator1) gid=10000(group01) groups=10000(group01),30000(operators),30001(admin),991(group02)
+```
+
+
+#### Modify Existing Groups from the Command Line
+
+ismini ve gid'sini değiştirme sonra silme.Farklı bir kullanıcı eklenmişse grup direk silinmez
+
+```sh
+[root@rocky2 ~]# groupmod -n group0022 group02
+[root@rocky2 ~]#  tail /etc/group
+tech2:x:1011:
+databaseadmins:x:35003:
+Students:x:35004:student
+student:x:1013:
+productions:x:35005:production1
+production1:x:1014:
+ansible:x:1015:
+group01:x:10000:operator2
+help:x:35006:
+group0022:x:991:operator2,operator1
+[root@rocky2 ~]# groupmod -g 20000 group0022
+[root@rocky2 ~]#  tail /etc/group
+tech2:x:1011:
+databaseadmins:x:35003:
+Students:x:35004:student
+student:x:1013:
+productions:x:35005:production1
+production1:x:1014:
+ansible:x:1015:
+group01:x:10000:operator2
+help:x:35006:
+group0022:x:20000:operator2,operator1
+[root@rocky2 ~]# groupdel group0022
+
+```
+
+
+
+#### Temporarily Change Your Primary Group
+
+
+
+```sh
+[root@rocky2 ~]# newgrp group01
+[root@rocky2 ~]# newgrp techdocs
+[root@rocky2 ~]# id
+uid=0(root) gid=35002(techdocs) groups=35002(techdocs),0(root),1002(operator2),10000(group01) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+
+```
+
+
+
+
+
+
+
+
+
+## Manage User Passwords
+
+### Shadow Passwords and Password Policy
+
+
+
+
+
+
+```sh
+[root@rocky2 ~]# cat /etc/shadow
+root:$6$UknubP7XQPz9Ll95$UfcU2vcOZRpzIM3Z8OSZMRyqBJeUaZ2drODB7oyDjUggXUjG9xlpvsbuPxHiUC0en/zHN2CiEwiT6XXPdk5Wj/:19788:0:99999:7:::
+bin:*:19469:0:99999:7:::
+daemon:*:19469:0:99999:7:::
+adm:*:19469:0:99999:7:::
+.
+.
+.
+user:$6$0tU2Xl7fGLKl/8xO$zJyBBOzURAu2dvtXNgU9J3fRm/DpVPsY9NRSlol28LtiMFqhRT2QMsVRW55fFiJtKkOYTgFsr2ZbeIfZhoMF20:19780:0:99999:7:::
+operator1:$6$I/D2c571vvqpzdzK$7s24s2yC0N7eAim3ZptGR0MbsH3qrnRt/VprEOPoAj4LJn81FOBYvWGPC8dsllQZ4T7WKbcXUXO8zNG8zaVoe.:19784:0:90:7::19241:
+operator2:$6$RWrIUmhyNrdnYJH8$lZ4HwIHORqDlQSW7NTc7t3kKmMc9erKUtKQeliBMEunkBPgUhGpmihHm0wiKsrrqhHmlbFso17tXaWPdG9vU.0:19784:0:99999:7:::
+
+```
+Each field of this code block is separated by a colon:
+
+• operator1 : Name of the user account.
+
+• $6$CSsXsd3rwghsdfarf : The encrypted password of the user.
+
+• 17933 : The days from the epoch when the password was last changed, where the epoch is 1970-01-01 in the UTC time zone.
+
+• 0 : The minimum days since the last password change before the user can change it again.
+
+• 99999 : The maximum days without a password change before the password expires. An empty field means that the password never expires.
+
+• 7 : The number of days ahead to warn the user that their password will expire.
+
+• 2 : The number of days without activity, starting with the day the password expired, before the account is automatically locked.
+
+• 18113 : The day when the account expires in days since the epoch. An empty field means that the account never expires.
+
+• The last field is typically empty and reserved for future use.
+
+
+
+
+
+
+
+
+
 
 
 
