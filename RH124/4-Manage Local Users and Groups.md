@@ -207,6 +207,68 @@ The next table summarizes the differences between the su, su -, and sudo command
 | Activity logged | su command only | su command only | Per escalated command |
 
 
+kullanıcılara belirli-spesifik yetkilendirme yapabilmek için Command Aliases - Cmnd_Alias kullanilir.
+
+kullaniciya sudo ile çalıştırabileceği işlevler belirtilir
+
+```sh
+[root@rocky2 ~]# vi /etc/sudoers
+
+## Command Aliases
+## These are groups of related commands...
+
+## Networking
+# Cmnd_Alias NETWORKING = /sbin/route, /sbin/ifconfig, /bin/ping, /sbin/dhclient, /usr/bin/net, /sbin/iptables, /usr/bin/rfcomm, /usr/bin/wvdial, /sbin/iwconfig, /sbin/mii-tool
+
+## Installation and management of software
+# Cmnd_Alias SOFTWARE = /bin/rpm, /usr/bin/up2date, /usr/bin/yum
+
+## Services
+# Cmnd_Alias SERVICES = /sbin/service, /sbin/chkconfig, /usr/bin/systemctl start, /usr/bin/systemctl stop, /usr/bin/systemctl reload, /usr/bin/systemctl restart, /usr/bin/systemctl status, /usr/bin/systemctl enable, /usr/bin/systemctl disable
+
+## Updating the locate database
+# Cmnd_Alias LOCATE = /usr/bin/updatedb
+
+## Storage
+# Cmnd_Alias STORAGE = /sbin/fdisk, /sbin/sfdisk, /sbin/parted, /sbin/partprobe, /bin/mount, /bin/umount
+
+## Delegating permissions
+# Cmnd_Alias DELEGATING = /usr/sbin/visudo, /bin/chown, /bin/chmod, /bin/chgrp
+.
+.
+.
+## Allows members of the 'sys' group to run networking, software,
+## service management apps and more.
+# %sys ALL = NETWORKING, SOFTWARE, SERVICES, STORAGE, DELEGATING, PROCESSES, LOCATE, DRIVERS
+
+```
+
+sudoers.d altında custome sudoers dosyalarını oluşturup yetkilendirmeler yapılabilir.Group yetkilendirmeleri % ile başlar.
+
+```sh
+[root@rocky2 ~]# vi /etc/sudoers.d/
+admin        consultants  operator1
+[root@rocky2 ~]# vi /etc/sudoers.d/consultants
+#grup yetkilendirmesi
+
+%consultants ALL=(ALL) ALL
+~
+#kullanıcı yetkilendirmesi
+[root@rocky2 ~]# vi /etc/sudoers.d/operator1
+
+operator1 ALL=(ALL) ALL
+~
+#kullaniciya sadece kullanıcı ekleme yetkisi verme
+[root@rocky2 ~]# vi /etc/sudoers.d/useradd
+
+operator2 ALL=/sbin/useradd NOPASSWD:ALL
+~
+~
+```
+
+
+
+## Manage Local User Accounts
 
 
 
