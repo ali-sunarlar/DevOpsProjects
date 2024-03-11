@@ -111,7 +111,7 @@ drwxr-xr-x.  2 root root   54 Mar  8 23:15 Videos
 ## Manage File System Permissions from the Command Line
 
 
-### Change Permissions with the Symbolic Method
+### Change Permissions with the Symbolic Method(Sembolik Metot)
 
 
 chmod Who/What/Which file|directory
@@ -122,6 +122,159 @@ chmod Who/What/Which file|directory
 | g | group | Member of the file's group. |
 | o | other | Users who are not the file owner nor members of the file's group. |
 | a | all | All the three previous groups. |
+
+
+Operators
+
+| What | Operation | Description |
+|--|--|--|
+| + | add | Adds the permissions to the file. |
+| - | remove | Removes the permissions to the file. |
+| = | set exactly | Set exactly the provided permissions to the file. |
+
+
+Permissions
+
+| Which | Mode | Description |
+|--|--|--|
+| r | read | Read access to the file. Listing access to the directory. |
+| w | write | Write permissions to the file or directory. |
+| x | execute | Execute permissions to the file. Allows to enter the directory, and access files and subdirectories inside the directory. |
+| X | special execute | Execute permissions for a directory, or execute permissions to a file if it has at least one of the execute bits set. |
+
+
+
+chmod   u - user    +/-/=   dosyaismi/dizinisimi
+
+        g - group   +/-/=   dosyaismi/dizinisimi     
+        
+        o - other   +/-/=   dosyaismi/dizinisimi
+
+        a - all     +/-/=   dosyaismi/dizinisimi
+
+chmod u+rwx dosyaismi
+
+chmod ug+rwx
+
+chmod og+rwx
+
+chmod u=rw 
+
+chmod u-x
+
+
+bütün herkesin yetkisi alınır
+```sh
+[root@rocky2 ~]# chmod a-rwx dosya1.txt
+[root@rocky2 ~]# ls -l dosya1.txt
+----------+ 1 root root 0 Mar  8 23:17 dosya1.txt
+[root@rocky2 ~]# chmod a-rwx dosya2.txt
+[root@rocky2 ~]# ls -l dosya2.txt
+----------. 1 root root 0 Mar  8 23:17 dosya2.txt
+```
+
+user'a read yetkisi verme
+
+```sh
+[root@rocky2 ~]# chmod u+r dosya2.txt
+[root@rocky2 ~]# ls -l dosya2.txt
+-r--------. 1 root root 0 Mar  8 23:17 dosya2.txt
+```
+
+group ve other için sadece execute yetkisi
+
+```sh
+[root@rocky2 ~]# chmod go+x dosya2.txt
+[root@rocky2 ~]# ls -l dosya2.txt
+-r----x--x. 1 root root 0 Mar  8 23:17 dosya2.txt
+```
+
+User'ı read write execute yetkisi ile eşitleme
+
+```sh
+[root@rocky2 ~]# chmod u=rwx dosya2.txt
+[root@rocky2 ~]# ls -l dosya2.txt
+-rwx--x--x. 1 root root 0 Mar  8 23:17 dosya2.txt
+```
+
+User'ı sadece read verme diğer yetkileri alma
+
+```sh
+[root@rocky2 ~]# chmod u=r dosya2.txt
+[root@rocky2 ~]# ls -l dosya2.txt
+-r----x--x. 1 root root 0 Mar  8 23:17 dosya2.txt
+```
+
+Dizin altında oluşturulan dosyalar dizinle aynı yetkide olmaz.(Umask diye bir kavram'dan dolayı böyledir )
+
+```sh
+[root@rocky2 ~]# ls -l
+total 24
+-rw-------.  1 root root 1425 Feb 25 20:09 anaconda-ks.cfg
+drwxr-xr-x. 10 root root 4096 Mar  9 01:37 Documents
+----------+  1 root root    0 Mar  8 23:17 dosya1.txt
+-r----x--x.  1 root root    0 Mar  8 23:17 dosya2.txt
+-rw-r--r--.  1 root root    0 Mar  8 23:17 dosya3.txt
+-rw-r--r--.  1 root root    0 Mar  8 23:17 dosya4.txt
+-rw-r--r--.  1 root root    0 Mar  8 23:17 dosya5.txt
+drwxr-xr-x.  2 root root 4096 Mar  8 23:12 files
+drwxr-xr-x.  2 root root    6 Mar  8 23:11 folders
+-rw-r--r--.  1 root root   60 Mar  9 04:27 output.txt
+dr--r-xr-x.  4 root root   34 Mar  8 23:07 parentfolder
+drwxr-xr-x.  2 root root    6 Mar  6 21:27 serverbackup
+[root@rocky2 ~]# touch parentfolder/test1.txt parentfolder/test2.txt
+[root@rocky2 ~]# ls -l parentfolder/
+total 0
+drwxr-xr-x. 2 root root 6 Mar  8 23:07 child1
+drwxr-xr-x. 2 root root 6 Mar  8 23:07 child2
+-rw-r--r--. 1 root root 0 Mar 10 07:42 test1.txt
+-rw-r--r--. 1 root root 0 Mar 10 07:42 test2.txt
+```
+
+
+Dizin ve  dizin altındaki dizin ve dosyalar aynı yetkilerin verilmesi için
+
+```sh
+#yetki alma
+[root@rocky2 ~]# chmod -R ugo-rwx parentfolder
+[root@rocky2 ~]# ls -l parentfolder/
+total 0
+d---------. 2 root root 6 Mar  8 23:07 child1
+d---------. 2 root root 6 Mar  8 23:07 child2
+----------. 1 root root 0 Mar 10 07:42 test1.txt
+----------. 1 root root 0 Mar 10 07:42 test2.txt
+#yetki verme
+[root@rocky2 ~]# chmod -R ugo+rwx parentfolder
+[root@rocky2 ~]# ls -l parentfolder/
+total 0
+drwxrwxrwx. 2 root root 6 Mar  8 23:07 child1
+drwxrwxrwx. 2 root root 6 Mar  8 23:07 child2
+-rwxrwxrwx. 1 root root 0 Mar 10 07:42 test1.txt
+-rwxrwxrwx. 1 root root 0 Mar 10 07:42 test2.txt
+```
+
+
+## Change Permissions with the Octal Method(Numerik Metot)
+
+chmod ### file|directory
+
+• Start with 0.
+
+• If you want to add read permissions for this access level, then add 4.
+
+• If you want to add write permissions, then add 2.
+
+• If you want to add execute permissions, then add 1.
+
+| Binary Conversion |
+|--|--|--|
+| 1 | 1 | 1 |
+| 4 | 2 | 1 |
+|           |
+
+
+
+
 
 
 
