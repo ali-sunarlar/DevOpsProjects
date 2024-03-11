@@ -669,28 +669,168 @@ Each field of this code block is separated by a colon:
 • The last field is typically empty and reserved for future use.
 
 
+Format of an Encrypted Password
+
+• 6 : The hashing algorithm in use for this password. A 6 indicates a SHA-512 hash, the RHEL 9
+default, a 1 indicates MD5, and a 5 indicates SHA-256.
+
+• CSsXcYG1L/4ZfHr/ : The salt in use to encrypt the password; originally chosen at random.
+
+• 2W6evvJahUfzfHpc9X.45Jc6H30E : The encrypted hash of the user's password; combining
+the salt and the unencrypted password and then encrypting to generate the password hash.
 
 
 
+### Configure Password Aging
+
+
+The command defines a minimum age (-m) of zero days, a maximum age (-M)
+of 90 days, a warning period (-W) of 7 days, and an inactivity period (-I) of 14 days
+
+```sh
+[root@rocky2 user]# chage -m 0 -M 90 -W 7 -I 14 sysadmin05
+
+```
+
+
+The cloudadmin10
+user is new in the system and you want to set a custom password aging policy. You want to set the
+account expiration 30 days from today, so you use the following commands:
+
+```sh
+#Use the date command to get the current date
+[root@rocky2 user]# date +%F
+2024-03-09
+#Use the date command to get the date 30 days from now.
+[root@rocky2 user]# date -d "+30 days" +%F
+2024-04-09
+#Use the chage command -E option to change the expiration date for the cloudadmin10 user.
+[root@rocky2 user]# chage -E $(date -d "+30 days" +%F) cloudadmin10
+#Use the chage command -l option to display the password aging policy for the cloudadmin10 user.
+[root@rocky2 user]# chage -l cloudadmin10 | grep "Account expires"
+Account expires                                         : Apr 09, 2024
+[root@rocky2 user]# chage -l cloudadmin10
+Last password change                                    : Mar 09, 2024
+Password expires                                        : never
+Password inactive                                       : never
+Account expires                                         : Apr 09, 2024
+Minimum number of days between password change          : 0
+Maximum number of days between password change          : 99999
+Number of days of warning before password expires       : 7
+
+
+[root@rocky2 user]# chage --help
+Usage: chage [options] LOGIN
+
+Options:
+  -d, --lastday LAST_DAY        set date of last password change to LAST_DAY
+  -E, --expiredate EXPIRE_DATE  set account expiration date to EXPIRE_DATE
+  -h, --help                    display this help message and exit
+  -i, --iso8601                 use YYYY-MM-DD when printing dates
+  -I, --inactive INACTIVE       set password inactive after expiration
+                                to INACTIVE
+  -l, --list                    show account aging information
+  -m, --mindays MIN_DAYS        set minimum number of days before password
+                                change to MIN_DAYS
+  -M, --maxdays MAX_DAYS        set maximum number of days before password
+                                change to MAX_DAYS
+  -R, --root CHROOT_DIR         directory to chroot into
+  -W, --warndays WARN_DAYS      set expiration warning days to WARN_DAYS
+
+```
 
 
 
+```sh
+[root@rocky2 user]# vi /etc/login.defs
+# Password aging controls:
+#
+#       PASS_MAX_DAYS   Maximum number of days a password may be used.
+#       PASS_MIN_DAYS   Minimum number of days allowed between password changes.
+#       PASS_MIN_LEN    Minimum acceptable password length.
+#       PASS_WARN_AGE   Number of days warning given before a password expires.
+#
+PASS_MAX_DAYS   99999
+PASS_MIN_DAYS   0
+PASS_WARN_AGE   7
 
 
 
+#referans alınması gereken manuel sayfaları. Bütün açıklamalar bulunabilir. Standalone parola degisiklikleri
+man login.defs
+man crypt
+man chage
 
 
 
+```
+
+### The nologin Shell
+
+shell'e login olmasın isteniyorsa 
+
+```sh
+[root@rocky2 user]# usermod -s /sbin/nologin cloudadmin10
+[root@rocky2 user]# su cloudadmin10
+This account is currently not available.
+#sonra geri alınması
+[root@rocky2 user]# usermod -s /bin/bash cloudadmin10
+
+```
 
 
+### Restrict Access
 
 
+```sh
+[root@rocky2 user]# usermod -L cloudadmin10
+[cloudadmin10@rocky2 ~]$ su - cloudadmin10
+Password:
+su: Authentication failure
+[root@rocky2 user]# passwd -S cloudadmin10
+cloudadmin10 LK 2024-03-09 0 99999 7 -1 (Password locked.)
+[root@rocky2 user]# chage -l cloudadmin10
+Last password change                                    : Mar 09, 2024
+Password expires                                        : never
+Password inactive                                       : never
+Account expires                                         : Mar 14, 2024
+Minimum number of days between password change          : 0
+Maximum number of days between password change          : 99999
+Number of days of warning before password expires       : 7
+```
+
+ the usermod command locks and expires the
+cloudadmin10 user at 2024-03-14
+
+```sh
+[root@rocky2 user]# usermod -L -e 2024-03-14 cloudadmin10
+[root@rocky2 user]# chage -l cloudadmin10
+Last password change                                    : Mar 09, 2024
+Password expires                                        : never
+Password inactive                                       : never
+Account expires                                         : Mar 14, 2024
+Minimum number of days between password change          : 0
+Maximum number of days between password change          : 99999
+Number of days of warning before password expires       : 7
+[root@rocky2 user]# passwd -S cloudadmin10
+cloudadmin10 LK 2024-03-09 0 99999 7 -1 (Password locked.)
+
+```
 
 
+passwd -S 
+
+PS-->Password Set
+
+LK-->Locked
+
+NP-->No Password
 
 
-
-
-
-
+```sh
+[root@rocky2 user]# passwd -S operator1
+operator1 PS 2024-03-02 0 90 7 -1 (Password set, SHA512 crypt.)
+[root@rocky2 user]# passwd -S cloudadmin10
+cloudadmin10 LK 2024-03-09 0 99999 7 -1 (Password locked.)
+```
 
