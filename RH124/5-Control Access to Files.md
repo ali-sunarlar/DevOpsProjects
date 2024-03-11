@@ -272,7 +272,7 @@ chmod ### file|directory
 
 4 + 2  + 1 =7
 
-User
+(u)User
 
 1   1   0
 
@@ -280,14 +280,81 @@ r   w   x
 
 4 + 2 + 0 =6
 
-Group
+(g)Group
+
+1   0   0
+
+r   w   x
+
+4 + 0 + 0 =4
+
+(o)Other
+
+
+1   0   0
+
+r   w   x
+
+4 + 0 + 0 =4
+
+
+chmod 644 sample.xt
+
+```sh
+[root@rocky2 ~]# chmod 644 dosya3.txt
+[root@rocky2 ~]# ls -l dosya3.txt
+-rw-r--r--. 1 root root 0 Mar  8 23:17 dosya3.txt
+```
+
+
+
+## Change File and Directory User or Group Ownership
+
+
+ownerlığı farklı bir kullanıcıya verme
+
+```sh
+[root@rocky2 ~]# chown operator1 dosya4.txt
+[root@rocky2 ~]# ls -l dosya4.txt
+-rw-r--r--. 1 operator1 root 0 Mar  8 23:17 dosya4.txt
+```
+
+dizin altındaki tüm klasörlerin ve dosyaların owner'lığını verme
+
+```sh
+[root@rocky2 ~]# chown -R operator1 parentfolder
+[root@rocky2 ~]# ls -l parentfolder/
+total 0
+drwxrwxrwx. 2 operator1 root 6 Mar  8 23:07 child1
+drwxrwxrwx. 2 operator1 root 6 Mar  8 23:07 child2
+-rwxrwxrwx. 1 operator1 root 0 Mar 10 07:42 test1.txt
+-rwxrwxrwx. 1 operator1 root 0 Mar 10 07:42 test2.txt
+```
+
+grubun ownerlığını değiştirme. Grup ownerlığı ile beraber kullanıcı ownerlığını da değiştirme
+
+```sh
+[root@rocky2 ~]# chown :operators dosya5.txt
+[root@rocky2 ~]# ls -l dosya5.txt
+-rw-r--r--. 1 root operators 0 Mar  8 23:17 dosya5.txt
+[root@rocky2 ~]# chown operator1:operators dosya5.txt
+[root@rocky2 ~]# ls -l dosya5.txt
+-rw-r--r--. 1 operator1 operators 0 Mar  8 23:17 dosya5.txt
+```
 
 
 
 
 
 
+## Manage Default Permissions and File Access
 
+### Special Permissions
 
+Effects of Special Permissions on Files and Directories
 
-
+|
+|   Permission  | Effect on files   |    Effect on directories  |
+|   u+s (suid)  | File executes as the userthat owns the file, not asthe user that ran the file. | No effect. |
+|   g+s (sgid)  | File executes as the group that owns the file. | Files that are created in the directory have a group owner to match the group owner of the directory. |
+| o+t (sticky) | No effect. | Users with write access to the directory can remove only files that they own; they cannot remove or force saves to files that other users own. |
