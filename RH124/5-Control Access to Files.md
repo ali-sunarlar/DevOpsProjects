@@ -266,10 +266,21 @@ chmod ### file|directory
 
 • If you want to add execute permissions, then add 1.
 
-| Binary Conversion |
-|--|--|--|
-| 1 | 1 | 1 |
-| 4 | 2 | 1 |
+1   1   1   
+
+4   2   1
+
+4 + 2  + 1 =7
+
+User
+
+1   1   0
+
+r   w   x
+
+4 + 2 + 0 =6
+
+Group
 
 
 
