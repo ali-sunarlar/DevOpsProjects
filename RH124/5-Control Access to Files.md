@@ -351,11 +351,84 @@ grubun ownerlığını değiştirme. Grup ownerlığı ile beraber kullanıcı o
 
 ### Special Permissions
 
+x bir komutu o komutun owner yetkisiyle çalıştırmak için
+
 Effects of Special Permissions on Files and Directories
 
+örnek olarak passwd root haklarıyla beraber çalıştırılır.
+
+```sh
+[root@rocky2 ~]# ls -l /bin/passwd
+-rwsr-xr-x. 1 root root 32656 May 15  2022 /bin/passwd
+```
 
 |   Permission  | Effect on files   |    Effect on directories  |
 |--|--|--|
 |   u+s (suid)  | File executes as the userthat owns the file, not asthe user that ran the file. | No effect. |
 |   g+s (sgid)  | File executes as the group that owns the file. | Files that are created in the directory have a group owner to match the group owner of the directory. |
 | o+t (sticky) | No effect. | Users with write access to the directory can remove only files that they own; they cannot remove or force saves to files that other users own. |
+
+User veya grup owner lığı ile çalıştır
+
+
+Setting Special Permissions
+
+• Symbolic : setuid = u+s; setgid = g+s; sticky = o+t
+
+• Octal : In the added fourth preceding digit; setuid = 4; setgid = 2; sticky = 1
+
+sticky --> sadece bulunduğu dizinde veya dosyada işlemler yapabilir. okuyabilir ama silinemez
+
+chmod u + s
+
+chmod g + s
+
+chmod o + t
+
+bütün herkesin yetkisinin alınması
+
+```sh
+[root@rocky2 ~]# chmod 000 dosya5.txt
+[root@rocky2 ~]# ls -l dosya5.txt
+----------. 1 operator1 operators 0 Mar  8 23:17 dosya5.txt
+```
+
+sadece kullanıcı için execute yetkisi
+
+```sh
+[root@rocky2 ~]# chmod u+x dosya5.txt
+[root@rocky2 ~]# ls -l dosya5.txt
+---x------. 1 operator1 operators 0 Mar  8 23:17 dosya5.txt
+```
+
+```sh
+[root@rocky2 ~]# vi hello
+
+vi hello
+#!/bin/bash
+echo "Hello $USER"
+~
+~
+~
+```
+
+/bin altına kopyalayım ve user'lar için execute yetkisi verelim
+
+```sh
+[root@rocky2 ~]# chmod u+s /bin/hello
+[root@rocky2 ~]# ls -l /bin/hello
+-rwSr--r--. 1 root root 31 Mar 10 08:41 /bin/hello
+[root@rocky2 ~]# chmod u+x /bin/hello
+[root@rocky2 ~]# hello
+Hello root
+[root@rocky2 ~]# ls -l /bin/hello
+-rwsr--r--. 1 root root 31 Mar 10 08:41 /bin/hello
+[root@rocky2 user]# chmod a+x /bin/hello
+[user@rocky2 ~]$ hello
+Hello user
+```
+
+
+
+
+
