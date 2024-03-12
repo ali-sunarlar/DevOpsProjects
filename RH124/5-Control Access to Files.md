@@ -428,6 +428,62 @@ Hello root
 Hello user
 ```
 
+Add the setgid bit on the example directory by using the
+symbolic method
+
+```sh
+[root@rocky2 ~]# chmod 000 dosya5.txt
+[root@rocky2 ~]# chmod g+s dosya5.txt
+[root@rocky2 ~]# ls -l dosya5.txt
+------S---. 1 operator1 operators 0 Mar  8 23:17 dosya5.txt
+```
+
+Remove the setuid bit on the example directory by using the symbolic method
+
+```sh
+[root@rocky2 ~]# chmod u+s dosya5.txt
+[root@rocky2 ~]# ls -l dosya5.txt
+---S--S---. 1 operator1 operators 0 Mar  8 23:17 dosya5.txt
+[root@rocky2 ~]# chmod u-s dosya5.txt
+[root@rocky2 ~]# ls -l dosya5.txt
+------S---. 1 operator1 operators 0 Mar  8 23:17 dosya5.txt
+```
+
+Set the setgid bit and add read, write, and execute permissions for user and group, with no
+access for others, on the example directory by using the octal method
+
+```sh
+[root@rocky2 ~]# chmod 000 dosya5.txt
+[root@rocky2 ~]# ls -l dosya5.txt
+----------. 1 operator1 operators 0 Mar  8 23:17 dosya5.txt
+[root@rocky2 ~]# chmod 2770 dosya5.txt
+[root@rocky2 ~]# ls -l dosya5.txt
+-rwxrws---. 1 operator1 operators 0 Mar  8 23:17 dosya5.txt
+
+```
+
+chmod 4700         user'a 
+
+chmod 2700         sticky permission ataması yapar
+
+chmod 1700          other'a atama yapar
+
+
+işletmek istediğimiz komutları owner'ın haklarıyla işletmek istediğimizde kullanırız
+
+Add an extra 0 at the beginning of the permissions value when removing special permissions by using
+the octal method
+
+```sh
+[root@rocky2 ~]# chmod 000 dosya5.txt
+[root@rocky2 ~]# ls -l dosya5.txt
+----------. 1 operator1 operators 0 Mar  8 23:17 dosya5.txt
+[root@rocky2 ~]# chmod 00770 dosya5.txt
+[root@rocky2 ~]# ls -l dosya5.txt
+-rwxrwx---. 1 operator1 operators 0 Mar  8 23:17 dosya5.txt
+
+```
+ 
 
 
 
