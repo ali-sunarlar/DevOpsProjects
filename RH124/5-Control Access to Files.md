@@ -462,11 +462,11 @@ access for others, on the example directory by using the octal method
 
 ```
 
-chmod 4700         user'a 
+chmod 4700         user'a sticky permission ataması yapar
 
 chmod 2700         sticky permission ataması yapar
 
-chmod 1700          other'a atama yapar
+chmod 1700          other'a sticky permission atama yapar
 
 
 işletmek istediğimiz komutları owner'ın haklarıyla işletmek istediğimizde kullanırız
@@ -484,6 +484,42 @@ the octal method
 
 ```
  
+
+### Default File Permissions
+
+0022 herkesin okuma ve çalıştırma iznine sahip olduğunu belirtir
+
+Default yetki tanımlama
+
+```sh
+[root@rocky2 ~]# umask
+0022
+[root@rocky2 ~]# touch test3.txt
+[root@rocky2 ~]# ls -l test3.txt
+-rw-r--r--. 1 root root 0 Mar 10 20:06 test3.txt
+#herkese read write yetkisinin verilmesi
+[root@rocky2 ~]# umask 0
+[root@rocky2 ~]# touch test4.txt
+[root@rocky2 ~]# ls -l test4.txt
+-rw-rw-rw-. 1 root root 0 Mar 10 20:06 test4.txt
+#bir sıfır veya 4 sıfır olması farketmez
+[root@rocky2 ~]# umask 0000
+[root@rocky2 ~]# touch test5.txt
+[root@rocky2 ~]# ls -l test5.txt
+-rw-rw-rw-. 1 root root 0 Mar 10 20:10 test5.txt
+```
+
+|       |   Symblolic   |   Numeric octal   |   Numeric Binary  |
+|--|--|--|--|
+| Initial file permissions | rw-rw-rw-  |   0666    |   000 110 110 110     |
+| umask                     |--------w- |   0002    |   000 000 000 0010    |
+| resulting file permissions |  rw-rw-r--   |   0664    |   000 110 110 100 |
+
+
+
+
+
+
 
 
 
