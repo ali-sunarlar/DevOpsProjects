@@ -516,8 +516,126 @@ Default yetki tanımlama
 | resulting file permissions |  rw-rw-r--   |   0664    |   000 110 110 100 |
 
 
+default yapılandırmaların bulunduğu dosyalar ve default permission atanabilen dosyalar.
+
+3 farkli dosya ve yöntem vardır.
+
+/etc/profile
+
+~/.bashrc
+
+/etc/bashrc
+
+İşlem yapmak yapıya uygun olmaz. Değişiklik yapılması önerilmez
 
 
+/
+
+```sh
+[root@rocky2 ~]# cat /etc/profile
+# /etc/profile
+
+# System wide environment and startup programs, for login setup
+# Functions and aliases go in /etc/bashrc
+
+# It's NOT a good idea to change this file unless you know what you
+# are doing. It's much better to create a custom.sh shell script in
+# /etc/profile.d/ to make custom changes to your environment, as this
+# will prevent the need for merging in future updates.
+pathmunge () {
+    case ":${PATH}:" in
+        *:"$1":*)
+            ;;
+        *)
+            if [ "$2" = "after" ] ; then
+                PATH=$PATH:$1
+            else
+                PATH=$1:$PATH
+            fi
+    esac
+}
+.
+.
+.
+
+[root@rocky2 ~]# cat .bashrc
+# .bashrc
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+        . /etc/bashrc
+fi
+
+# User specific environment
+if ! [[ "$PATH" =~ "$HOME/.local/bin:$HOME/bin:" ]]
+then
+    PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+fi
+export PATH
+.
+.
+.
+
+[root@rocky2 ~]# cat /etc/bashrc
+# /etc/bashrc
+
+# System wide functions and aliases
+# Environment stuff goes in /etc/profile
+
+# It's NOT a good idea to change this file unless you know what you
+# are doing. It's much better to create a custom.sh shell script in
+# /etc/profile.d/ to make custom changes to your environment, as this
+# will prevent the need for merging in future updates.
+
+# Prevent doublesourcing
+if [ -z "$BASHRCSOURCED" ]; then
+  BASHRCSOURCED="Y"
+
+  # are we an interactive shell?
+  if [ "$PS1" ]; then
+    if [ -z "$PROMPT_COMMAND" ]; then
+      case $TERM in
+      xterm*|vte*)
+        if [ -e /etc/sysconfig/bash-prompt-xterm ]; then
+            PROMPT_COMMAND=/etc/sysconfig/bash-prompt-xterm
+        else
+            PROMPT_COMMAND='printf "\033]0;%s@%s:%s\007" "${USER}" "${HOSTNAME%%.*}" "${PWD/#$HOME/\~}"'
+        fi
+        ;;
+      screen*)
+        if [ -e /etc/sysconfig/bash-prompt-screen ]; then
+            PROMPT_COMMAND=/etc/sysconfig/bash-prompt-screen
+        else
+            PROMPT_COMMAND='printf "\033k%s@%s:%s\033\\" "${USER}" "${HOSTNAME%%.*}" "${PWD/#$HOME/\~}"'
+        fi
+        ;;
+      *)
+        [ -e /etc/sysconfig/bash-prompt-default ] && PROMPT_COMMAND=/etc/sysconfig/bash-prompt-default
+        ;;
+      esac
+    fi
+.
+.
+.
+
+```
+
+
+/etc/profile.d/ dizini altında custom tanımlamalar yapılabilir
+
+```sh
+[root@rocky2 ~]# vi /etc/profile.d/local-umask.sh
+
+# Overrides default umask configuration asda sda
+if [ $UID -gt 199 ] && [ "`id -gn`" = "`id -un`" ]; then
+ umask 007
+else
+ umask 022
+fi
+~
+~
+~
+```
 
 
 
