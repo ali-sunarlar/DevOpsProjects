@@ -20,8 +20,9 @@ docker container run --help
 docker container run --name proje1 python:2
 ```
 
-### info
+info
 
+```
 docker info
 
 docker container ls
@@ -29,11 +30,15 @@ docker container ls
 docker container ls --help
 
 docker container ls -all
+```
 
 ### sadece id'ler goruntulenir
-
+```
 docker container ls --all --quiet
+```
 
+Docker Operations
+```
 docker container run -d -p 4000:4000 docs/docker.github.io
 
 docker container rename jolly_hopper dockerweb
@@ -53,26 +58,31 @@ docker container rm f8bcecb2c75c
 docker container rm f8
 
 docker container rm stupefied_tesla --force
+```
 
-### topluca silme
-
+topluca silme
+```
 docker container rm 12 b4 0e
 
 docker container rm $(docker container ls -a -q)
+```
 
-### durmus olan container'lari siler
-
+durmus olan container'lari siler
+```
 docker container prune
+```
 
-## Linux Nginx / Windows IIS Web Server İncelmesi
+Linux Nginx / Windows IIS Web Server İncelmesi
 
 publish yayin yapilacagi port belirtilir. kisaltmasi -p
 
 -P random belirlenir
 
+```
 docker container run --publish 8080:80 nginx
 
 docker container run -p 8080:80 nginx
+```
 
 8080 portu host portu
 
@@ -80,6 +90,7 @@ docker container run -p 8080:80 nginx
 
 detach koyteynerı arka planda calistirir. kisaltmasi -d
 
+```
 docker container run --publish 8080:80 --detacth nginx
 
 docker container run --publish 8080:80 -d nginx
@@ -87,11 +98,13 @@ docker container run --publish 8080:80 -d nginx
 docker pull nanoserver/iis
 
 docker container run -p 5080:80 -d nanoserver/iis
+```
 
+SSH olmadan Container'a Baglanip Islem Yapma
 
-## SSH olmadan Container'a Baglanip Islem Yapma
-
+```
 docker container run centos
+```
 
 --interactive Standard Input Acik tutar ve erisime izin verir. terminale erismek icin
 
@@ -101,9 +114,11 @@ kisaltmasi -i
 
 kisaltmasi -t
 
+```
 docker container run --interactive --tty
 
 docker container run -i -t
+```
 
 bash konteyner icerisindeki isletim sistemi kabuguna baglan
 
