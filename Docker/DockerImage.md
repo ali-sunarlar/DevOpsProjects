@@ -10,9 +10,11 @@ list
 docker image ls
 ```
 
-### download image
+download image
 
+```
 docker image pull python
+```
 
 ### personal image download
 
