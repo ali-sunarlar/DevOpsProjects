@@ -1,8 +1,9 @@
 
 ## Koytener Başlat / Duraklar / Sil / Listele Komut İşlemleri
 
-### run
+run
 
+```
 docker container run hello-world
 
 docker container run alpine
@@ -17,6 +18,7 @@ docker container ls -a
 docker container run --help
 
 docker container run --name proje1 python:2
+```
 
 ### info
 
