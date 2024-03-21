@@ -1,0 +1,39 @@
+- name: Install Node Exporter
+  hosts: nodes
+  become: true
+  tasks:
+   - name: Copy Node Exporter Application file
+     copy:
+       src: ../Applications/node_exporter-1.7.0.linux-amd64.tar.gz
+       dest: /tmp/node_exporter-1.7.0.linux-amd64.tar.gz
+   - name: Copy Exporter Service file
+     copy:
+       src: ../Applications/node_exporter.service
+       dest: /tmp/node_exporter.service
+   - name: Copy Service File Via Systemd
+     command: sudo mv -f /tmp/node_exporter.service /etc/systemd/system/node_exporter.service
+   - name: Extract Node Exporter
+     command: tar xvf /tmp/node_exporter-1.7.0.linux-amd64.tar.gz -C /tmp/
+   - name: Create node_exporter user
+     command: sudo useradd --no-create-home --shell /bin/false node_exporter 
+     ignore_errors: yes
+   - name: Create Node_Exporter directory
+     file:
+        owner: node_exporter
+        group: node_exporter
+        mode: 777
+        recurse: yes
+        path: /opt/node_exporter
+        state: directory
+   - name: Copy Source File
+     copy:
+       src: /tmp/node_exporter-1.7.0.linux-amd64/node_exporter
+       dest: /opt/node_exporter/node_exporter
+       mode: "u+rw,g-wx,o-rwx"
+   - name: Change Source File Owner and Execute Permission
+     command: sudo chown -R node_exporter:node_exporter /opt/node_exporter
+   - name: service always started
+     systemd:
+       name: node_exporter
+       state: started
+       enabled: yes
