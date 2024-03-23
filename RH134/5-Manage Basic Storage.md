@@ -397,7 +397,7 @@ UUID=93dd64e0-8e6e-4346-8b6a-16e04484c814       /mnt/datadisk1  xfs     defaults
 ```
 
 
-Yeni eklenen disk lsblk vs gozukmezse
+Yeni eklenen disk lsblk vs gozukmezse. En gözükmezse reboot edilir.
 
 ```sh
 #çalıştırabilir
@@ -432,5 +432,32 @@ Mar 19 00:25:43 rocky2 systemd-udevd[4598]: id: Truncating stdout of 'dmi_memory
 
 ```
 
+Use the lsblk --fs command to scan the block devices that are connected to a machine and
+retrieve the file-system UUIDs.
+
+```sh
+[root@rocky4 user]# lsblk --fs
+NAME               FSTYPE      FSVER            LABEL                UUID                                   FSAVAIL FSUSE% MOUNTPOINTS
+sr0                iso9660     Joliet Extension Rocky-9-3-x86_64-dvd 2023-11-12-21-32-45-00
+nvme0n1
+├─nvme0n1p1        xfs                                               92e2631a-8a4e-4290-b086-f358e1c16a08    685.7M    29% /boot
+└─nvme0n1p2        LVM2_member LVM2 001                              iILB9i-JnGo-0wje-VUv8-z1R7-jiDs-Wetitm
+  ├─rootvg-LV_root xfs                                               d230417f-721c-44dc-8830-cea4576fa936     13.9G    13% /
+  └─rootvg-LV_swap swap        1                                     6bee958c-f72f-408c-91d7-1fa11ec89867                  [SWAP]
+```
+
+
+
+## Manage Swap Space
+
+### Swap Space Calculation
+
+| RAM | Swap space | Swap space if allowing for hibernation |
+| 2 GB or less | Twice the RAM | Three times the RAM |
+| Between 2 GB and 8 GB | Same as RAM | Twice the RAM |
+| Between 8 GB and 64 GB | At least 4 GB | 1.5 times the RAM |
+| More than 64 GB | At least 4 | GB Hibernation is not recommended |
+
+### Create Swap Space
 
 
