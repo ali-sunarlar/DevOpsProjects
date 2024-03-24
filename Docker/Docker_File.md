@@ -11,11 +11,12 @@ https://docs.docker.com/engine/reference/builder
 
 Hangi image dosyanin referans alinacagi belirtilir
 
+```dockerfile
 FROM <image>:tag
 
 FROM python:2.7
 
-FROM centos:lates
+FROM centos:latest
 
 FROM microsoft/iis:nanoserver
 
@@ -24,7 +25,7 @@ FROM mcr.microsoft.com/dotnet/framework/aspnet:latest
 FROM mcr.microsoft.com/windows/servercore:1607
 
 FROM mcr.microsoft.com/windows/servercore:1703
-
+```
 
 
 ### RUN
@@ -33,6 +34,7 @@ Container icerisinde komut calistirmak icin kullanilir
 
 RUN komut
 
+```dockerfile
 RUN ["<calistirabilir>","<deger 1>","<deger 2>"]
 
 RUN apt-get install -y vim
@@ -48,12 +50,12 @@ RUN ["powershell","c:/scipt.ps"]
 RUN echo "Hello World - Dockerfile">C:\inetpub\wwwroot\index.html
 
 RUN mkdir -p /app
-
+```
 
 ### ADD
 
 Container icerisine disaridan ve internet uzerinden data kopyalamasi yapmak icin kullanilir
-
+```dockerfile
 ADD kaynak-dosya hedef-dosya
 
 ADD info.txt /data/proje/
@@ -71,10 +73,12 @@ ADD http://example.com/sample.txt /data/
 ADD http://python.org/ftp/python/3.5.1/python-5.3.1.exe /temp/python-3.5.1.exe
 
 ADD ./requirements.txt /app/
-
+```
 
 ### COPY
 
+kopyalama
+```dockerfile
 COPY <kaynak> <hedef>
 
 COPY [--chown=<user>:<group>] <src>...<dest>
@@ -92,13 +96,14 @@ COPY config.txt C:\app\
 COPY source C:\data\sqlite
 
 COPY ./requirements.txt /app/
-
+```
 
 
 ### WORKDIR
 
 Container icerisinde calisma dizini olusturmak-belirlemek icin kullanilir
 
+```dockerfile
 WORKDIR <path>
 
 WORKKDIR /app
@@ -108,11 +113,13 @@ WORKDIR $DIRPATH/$DIRNAME
 WORKDIR C:\proje1
 
 WORKDIR C:\app\bin
+```
 
 ### VOLUME
 
 Container icerisine kalici depolama alani eklemek icin kullanilir
 
+```dockerfile
 VOLUME ["<mounpoint>"]
 
 VOLUME <mountpoint>
@@ -124,42 +131,48 @@ VOLUME ["/var/log/"]
 VOLUME C:\depo
 
 VOLUME /storage
+```
 
 ### EXPOSE
 
 container belirtilen port uzerinden talepleri dinler
 
+```dockerfile
 EXPOSE [<port>/<protocol>...]
 
 EXPOSE 8080
 
 EXPOSE 80/udp
+```
 
 ### lABEL
 
 Image sahibi veya farkli meta data detayi eklemek icin kullanilir
 
+```dockerfile
 LABEL <key>=<value> <key>=<value>
 
 LABEL version="1.0"
 
 LABEL Developer <alisunarlar@gmail.com>
 
-LABEL Student <alisunarlar@gmail.com>
-
+LABL Student <alisunarlar@gmail.com>
+```
 
 ### USER
 
+```dockerfile
 USER <user> [:<group>]
 
 USER ali[:IT]
 
 USER username
+```
 
 ### ENV
 
-Container için ortam değişkenleri tanımlamak için kullanılmaktadır.
-
+Container için ortam değişkenleri tanımlamak için kullanılmaktadır. Key value olarak tanımlanabilir.
+```dockerfile
 ENV <key> <value>
 
 ENV LOG_DIR /var/log/apache
@@ -167,11 +180,12 @@ ENV LOG_DIR /var/log/apache
 ENV sifre birikiuc123
 
 ENV APP_PORT 8080
+```
 
 ### CMD
 
 Container oluşturulduğunda belirliten uygulamayı calıştırmak icin kullanilir
-
+```dockerfile
 CMD <komut>
 CMD ["executable","param1","param2"]
 CMD ["param1","param2"]
@@ -180,11 +194,13 @@ CMD ["python","demo.py"]
 CMD node server.js
 CMD ["dotnet","aspdoketnet.dll"]
 CMD c:\Apache24\bin\httpd.exe -w
+```
 
 ### ENTRYPOINT
 
 container olusturuldugunda varsayılan parametreleri tanımlamak ve calistirmak icin kullanilir
 
+```dockerfile
 ENTRYPOINT <path>
 
 ENTRYPOINT ["executable","param1","param2"]
@@ -192,9 +208,11 @@ ENTRYPOINT ["executable","param1","param2"]
 ENTRYPOINT ["echo","MerhabaDunya"]
 
 ENTRYPOINT ["node","server.js"]
+```
 
 #### CMD ile beraber calistirilmasi
 
+```dockerfile
 ENTRYPOINT ["npm"]
 
 CMD ["start"]
@@ -206,7 +224,7 @@ CMD ["main.py"]
 ENTYPOINT["ping"]
 
 CMD ["8.8.8.8","-c","3"]
-
+```
 
 ### Shell ve Exec 
 
@@ -242,6 +260,7 @@ CMD ["node","/web-ping/app.js"]
 
 ### Example
 
+```dockerfile
 FROM ubuntu:latest
 
 LABEL Ali Sunarlar <alisunarlar@gmail.com>
@@ -255,30 +274,41 @@ COPY ..
 EXPOSE 80/tcp
 
 CMD ["nginx","- daeamon off"]
+```
 
 ### Exaple docker image olusturma
 
 Nokta(.) isaretini kullanarak icinde bulundugumuz klasordeki dockerfile dosyasinin derlenmesini saglamaktayiz.
 
+```sh
 docker image build --tag hello-dockerfile .
+```
 
 /opt/docker gibi docker file'nin tutuldugu dizin belirtilebilir.
 
+```sh
 docker image build --tag hello-dockerfile /opt/docker .
+```
 
 dockerhub'a gonderilecek sekilde image create etme
 
+```sh
 docker image build --tag alisunarlar/hello-dockerfile /opt/docker .
+```
 
 --tag kisaltmasi -t 'dir
 
 cache'deki veri cekilerek tekrar image olusturulabilir.
 
+```sh
 docker image build  --tag hello-dockerfile-wcache .
+```
 
 dockerfile ile olusturulmus image'dan container calistirma
 
+```sh
 docker container run -dp 8080:80 hello-dockerfile
+```
 
 ### .Dockerignore
 
@@ -289,14 +319,17 @@ gitignore ile aynı mantıktadır.
 
 ENTRYPOINT ornegi 1
 
-```
+```dockerfile
 FROM centos:latest
 
 ENTRYPOINT ["/bin/echo"]
+```
 
 calıştırılırsa
 
+```sh
 docker container run myimage 1 2 3
+```
 
 output --> 123 olur
 
@@ -317,11 +350,11 @@ output --> 0123 olur
 
 
 CMD Ornegi
-
+```dockerfile
 FROM centos:latest
 
 ENV isim Ali Sunarlar
 
 CMD
-
+```
 
