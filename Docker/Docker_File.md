@@ -358,3 +358,13 @@ ENV isim Ali Sunarlar
 CMD
 ```
 
+sabit olmasini istedigimiz deger ENTRYPOINT icerisine degisken degerleri CMD icerisine yazarak kullanabiliriz
+```dockerfile
+ENTRYPOINT ["/bin/chamber","exec","production","--"]
+CMD ["/bin/service","-d"]
+```
+
+ENTRYPOINT
+
+
+

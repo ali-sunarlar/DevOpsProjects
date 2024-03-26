@@ -227,6 +227,12 @@ Commercial support is available at
 ```
 
 
+```powershell
+PS C:\Users\ali.sunarlar\repo\DevOpsProjects\Docker\DevOpsCourse\2-Week> docker container ls
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+```
+
+
 
 
 
