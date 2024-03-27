@@ -467,6 +467,8 @@ ENTRYPOINT [ "npm" ]
 CMD [ "start" ]
 ```
 
+Hello world from C language
+
 ```c
 #include <stdio.h>
 int main (void)
@@ -491,5 +493,39 @@ Create and run
 ```sh
 docker image build --tag helloworldfromc .
 docker container run helloworldfromc  
-Hello from C language
+Hello world from C language
 ```
+
+Multistage Çok katmanlı Dockerfile
+
+Bir önceki oluşturduğumuz image boyutu 178MB
+
+```sh
+ocker images
+REPOSITORY          TAG       IMAGE ID       CREATED             SIZE
+helloworldfromc     latest    81de089c67b7   16 minutes ago      178MB
+```
+
+```dockerfile
+FROM alpine:3.7 AS build
+RUN apk update && apk add --update alpine-sdk
+RUN mkdir /app
+WORKDIR /app
+COPY ./helloworld /app/
+RUN mkdir bin
+RUN gcc merhaba.c -o bin/merhaba
+
+FROM alpine:3.7
+COPY --from=build /app/bin/merhaba /app/merhaba
+CMD /app/merhaba
+```
+
+boyutun küçüldüğü görülüyor
+```sh
+docker image ls 
+REPOSITORY                  TAG       IMAGE ID       CREATED             SIZE
+helloworldfromcmultistage   latest    fc082ab6f883   18 seconds ago      4.22MB
+helloworldfromc             latest    81de089c67b7   24 minutes ago      178MB
+```
+
+
