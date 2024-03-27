@@ -364,7 +364,98 @@ ENTRYPOINT ["/bin/chamber","exec","production","--"]
 CMD ["/bin/service","-d"]
 ```
 
-ENTRYPOINT
+Ornek Dockerfile İncelemeleri
+
+Create dockerfile
+```dockerfile
+FROM ubuntu:latest
+FROM apt update && apt install -y cowsay
+CMD ["/usr/games/cowsay","Hello from Dockerfile"]
+```
+
+Create Image and Run
+
+```sh
+docker image build --tag cowsay1 .
+docker container run cowsay1
+ _______________________
+< Hello from Dockerfile >
+ -----------------------
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+```
+
+```dockerfile
+FROM mcr.microsoft.com/windows/nanoserver:1709
+COPY hello.txt C:
+CMD ["cmd", "/C", "type C:\\hello.txt"]
+```
+
+Create and Run
+```sh
+docker image build --tag nanoserverhello .
+docker container run nanoserverhello
+Hello from nanoserver
+```
+
+Daha az layer kullanilmasi onerilir.
+```dockerfile
+FROM alpine:3.7
+LABEL By dockerfile <alisunarlar@gmail.com>
+RUN apk update && apk add \
+    curl \
+    git \
+    vim \
+    wget
+```
+
+```dockerfile
+FROM mcr.microsoft.com/windows/servercore:1607
+COPY pscode.ps1 c:\\pscode1.ps1
+CMD ["powershell.exe", "c:\\pscode.ps1"]
+```
+
+```dockerfile
+FROM mcr.microsoft.com/windows/servercore:1607
+LABEL Description="Custom-Windows" Vendor="Microsoft" Version="1"
+RUN powershell -Command Install-WindowsFeature Web-server, \
+    Web-Asp-Net45, Net-Framework-45-ASPNET, \
+    DNS, RSAT-DNS-Server -Verbose
+CMD ["ping", "-t","localhost">NULL]
+```
 
 
+```dockerfile
+FROM microsoft/iis
+RUN powershell -NoProfile -Command Remove-Item --Recurse C:\inetpub\wwwroot\*
+COPY . C:\inetpub\wwwroot
+EXPOSE 80
+```
 
+```dockerfile
+FROM ubuntu:16.04
+RUN apt-get update \
+    && apt-get install -y nginx \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tpm/* /var/tmp/* \
+    && echo "daemon off;" >> /etc/nginx/nginx.conf
+ADD default /etc/nginx/sites-available/default
+EXPOSE 80
+CMD ["nginx"]
+```
+
+```dockerfile
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1
+WORKDIR /src
+COPY src/ .
+RUN dotnet restore; dotnet build
+CMD ["dotnet","run"]
+```
+
+
+```dockerfile
+
+```
