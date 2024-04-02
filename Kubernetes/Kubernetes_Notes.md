@@ -4,17 +4,24 @@ Etcd
 
 (kalıcı storage) etcd cluster'ınızdaki (master ve worker'larin)state durumunu tutar. Servislerin, replica set'lerin state bilgisini veya tüm objelerin state bilgisini tutar.
 
-Api Server
+Api Server(k8s beyni)
 
 Bütün bilesenlerin haberlesmesini saglar. İstekleri gerekli node'a , scheduler'a veya etcd'ye iletir. Çalışmazsa ortam fail alır. Hiçbir işlem yapılamaz. Node çalışabilir yalnız ortamın bütünü yönetilemez
 
 Controller Manager
 
-Bizim ortamımızdaki bütün katmanların yönetilmesinden sorumludur. Deployment'lar replica set'ler. Worker'lar master set'lerin kontrolünü sağlar
+Bizim ortamımızdaki bütün katmanların yönetilmesinden sorumludur. Deployment'lar replica set'ler. Worker'lar master set'lerin kontrolünü sağlar. MaSTER NODE uzerinde bulunan kontrolcüleri yoneten birimdir. Kontrol merkezi olarak gorev alir ve tum nesneleri denetler. Gecerli durum ile istenen durumu izler.
+
+|Controller|Gorevi|
+|--|--|
+| Node Controller | Node'larin ayakta olup olmadigini kontrolunu yapar |
+| Replication Controller| Pod'larin olmasi gereken kopya sayisinda olup olmadigini kontrol eder ve eger fail olan pod varsa gerekli sayiya ceker |
+| Endpoints Controller | Pod ve service'lerin Endpoint'lerini olsturmak icin kullanilir. |
+| Service Account & Token Controllers | Yeni namespaceler icin standart hesaplari ve PI Access tokenlari olustusmaktadir. |
 
 Scheduler
 
-Bizim node'larin pod'larin oluşturulmasından sorumludur. 
+Bizim node'larin pod'larin oluşturulmasından sorumludur. Pod'larin hangi node uzerinde calistirilacagina karar veren komponentdir. Pod'un ihtiyac duydugu CPU ve RAM hangi node uzerinde musatise o node uzerinde pod olusturulur.
 
 ornek olarak kubectl run denilirse ilk olarak bu istek Api server'a gider Api server etcd'ye iletir. Etcd böyle bir kayit var mi yok mu kontrol edilir sonra tekrar Api server'a iletir. Api Server controller manager'a iletir hangi node'larin müsait olduğu bilgisini alir ve scheduler'a iletir ilgili pod'u create ederek çıktısını Api server'a iletir.
 
