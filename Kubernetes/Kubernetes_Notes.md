@@ -2,7 +2,7 @@ Master - Control Plane
 
 Etcd
 
-(kalıcı storage) etcd cluster'ınızdaki (master ve worker'larin)state durumunu tutar. Servislerin, replica set'lerin state bilgisini veya tüm objelerin state bilgisini tutar.
+(kalıcı storage) etcd cluster'ınızdaki (master ve worker'larin)state durumunu tutar. Servislerin, replica set'lerin state bilgisini veya tüm objelerin state bilgisini tutar. Yuksek erişilebilirlik(HA), tutarlilik ve izlenebilirlik ozelliklerine sahip daginik mimari ile tasarlanmis ve tum cluster verilerinin saklandigi bilesendir. Coreos tarafindan olusturulmus acik kaynakli key valus database'dir
 
 Api Server(k8s beyni)
 
@@ -33,16 +33,16 @@ Pod'larin calismis oldugu yapi
 
 kubelet
 
-Node üzerinde kurulu olan agent bileşeni. Master ve worker arasindaki iletişimi sağlayan bileşendir. Pod'
+Node üzerinde kurulu olan agent bileşeni. Master ve worker arasindaki iletişimi sağlayan bileşendir. Master nodeun worker node uzerinde calisan ajanidir. Her worker node kubelete bilesenini barindirir. Docker servisi ile konusarak pod'u ayaga kaldirir ve bunun bilgisini API server'a iletir.
 
 k-proxy(kubeproxy)
 
-hem master - worker arasindaki network tragini yöneten hem de  node üzerindeki çalışan pod networkünü yöneten bileşen (Pod'un ip almasini saglayan pod'larin haberlesmesini saglayan bileşendir)
+hem master - worker arasindaki network tragini yöneten hem de  node üzerindeki çalışan pod networkünü yöneten bileşen (Pod'un ip almasini saglayan pod'larin haberlesmesini saglayan bileşendir). Kubernetes uzerindeki network islemlerinden sorumludur. Pod'lara ip adresi verilmesi ve service load balance islemlerini yonetir. Kubernetes de pod icerisindeki tum container'lar tek ip'yi paylasir.
 
 
-Container Engine
+Container Engine(Runtime)
 
-Bütün node'larda olmasi gereken en temel bileşenlerdendir.
+Bütün node'larda olmasi gereken en temel bileşenlerdendir. Conatainer'larin calismasindan sorumlu ola bilesendir. Image'lari registry uzerinden ceker ve container'i olusturur. Akabinde start, stop, delete islemlerini yapar.
 
 Swap olmaması önerilir
 
