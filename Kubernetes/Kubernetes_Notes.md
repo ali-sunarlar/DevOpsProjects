@@ -44,6 +44,25 @@ Container Engine(Runtime)
 
 Bütün node'larda olmasi gereken en temel bileşenlerdendir. Conatainer'larin calismasindan sorumlu ola bilesendir. Image'lari registry uzerinden ceker ve container'i olusturur. Akabinde start, stop, delete islemlerini yapar.
 
+Kubernetes Nesneleri(Uygulamimizi calistirmak, Olceklendirmek ve yonetmek icin olusturulmus kalici varliklardir)
+
+Pod
+
+Namespaces
+
+ReplicationController
+
+Replicaset
+
+Deployment
+
+Service
+
+StatefulSet
+
+DeamonSet
+
+
 Swap olmaması önerilir
 
 ```sh
@@ -691,3 +710,37 @@ Then you can join any number of worker nodes by running the following on each as
 kubeadm join k8smaster01:6443 --token lakns8.1hzfhxndzlcxfuyr \
         --discovery-token-ca-cert-hash sha256:7c250dccd7119e2e2ff7832e44fad48194fcde478341d653abde871bf71798cb
 ```
+
+
+
+API Server'a islem yaptirma yontemleri
+
+1-  REST API Commands
+
+2-  UI uzerinden islem yapma (Dashboard). Her islem buradan yapilamıyor
+
+3-  Kubectl uzerinden islem yapma
+
+
+Label ve Selector
+
+POD, RS çok fazla oldugundan ne isi yaptigini belirten etiket belirtilir
+
+POD
+app:production
+
+rel:backend
+
+POD
+app:ui
+ver:beta15
+
+|--|
+|Etiketler Kubernetes nesnelerine eklenir ve anahtar değer bilgisinden oluşur|
+|Etiketler kubernetes üzerinde nesnelerin tanımlamasına ve gruplar halinde düzenlenmesini sağlar | 
+|Etiketler, nesne oluşturulurken yada çalışma anında eklenebilir veya değiştirilebilir |
+|Her etiket belirli bir nesne grubu için benzersiz olmalıdır |
+|Prefix “önek” kısmı opsiyoneldir. Zorunlu değildir. |
+|Etiket adı ve değeri 63 karakterle sınırlıdır. |
+|a-2-A_2-0-9 izin verilen karakterlerdir |
+|Key ve değer harf ile başlamalı ve bitmelidir |

@@ -1,8 +1,8 @@
-apiVersion: v1
-kind: Pod
-metadata:
+apiVersion: v1 #API surumunu tanimlar
+kind: Pod # nesne turunu tanimlar
+metadata: # olusturulacak nesneyi benzersiz kilan degerleri tanimlar
  name: mypod01
-spec:
+spec: # olusturulacak nesne detaylarini tanimlar kind'da tanimlanan nesneye gore degisir
  containers:
  - name: webserser01
    image: nginx:latest
