@@ -769,13 +769,19 @@ Kubernetes içerisinde ki POD'ları veya objeleri ayirmamiza/gruplandirmamiza im
 
 her proje icin ayri olusturulan klasore benzetebiliriz
 
-|Namespace|
-|--|
-|Kubernetes içerisindeki objeleri ayırmamıza gruplamamıza imkan sağlayan teknolojidir |
-|Kubernetes ilk kurulduğunda 4 namespace dahili olarak gelmektedir.
+Namespace
+Kubernetes içerisindeki objeleri ayırmamıza gruplamamıza imkan sağlayan teknolojidir
+
+Kubernetes ilk kurulduğunda 4 namespace dahili olarak gelmektedir.
+
   • default
+
   • kube-system
+
   • kube-public
-  • Kube-node-lease|
-|Namespacelar sayesinde cluster kaynakları farklı projeler için bölünebilmektedir |
-|Namespace isimleri birbirinden benzersiz olmak zorundadır |
+
+  • Kube-node-lease
+
+Namespacelar sayesinde cluster kaynakları farklı projeler için bölünebilmektedir
+
+Namespace isimleri birbirinden benzersiz olmak zorundadır
