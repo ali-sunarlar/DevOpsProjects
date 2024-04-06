@@ -774,12 +774,8 @@ her proje icin ayri olusturulan klasore benzetebiliriz
 |Kubernetes içerisindeki objeleri ayırmamıza gruplamamıza imkan sağlayan teknolojidir |
 |Kubernetes ilk kurulduğunda 4 namespace dahili olarak gelmektedir.
   • default
-
   • kube-system
-  
   • kube-public
-  
-  • Kube-node-lease
-|
+  • Kube-node-lease|
 |Namespacelar sayesinde cluster kaynakları farklı projeler için bölünebilmektedir |
 |Namespace isimleri birbirinden benzersiz olmak zorundadır |
