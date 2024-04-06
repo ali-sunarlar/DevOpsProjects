@@ -735,6 +735,7 @@ POD
 app:ui
 ver:beta15
 
+|Label|
 |--|
 |Etiketler Kubernetes nesnelerine eklenir ve anahtar değer bilgisinden oluşur|
 |Etiketler kubernetes üzerinde nesnelerin tanımlamasına ve gruplar halinde düzenlenmesini sağlar | 
