@@ -745,3 +745,41 @@ ver:beta15
 |Etiket adı ve değeri 63 karakterle sınırlıdır. |
 |a-2-A_2-0-9 izin verilen karakterlerdir |
 |Key ve değer harf ile başlamalı ve bitmelidir |
+
+
+Selector
+
+etiketledigimiz nesneleri bulup islem yaptirmak istedigimizde kullandigimiz bir tanimdir.
+
+Dısaridan gelen kullanici taleplerini ilgili etikete sahip pod'lara load balance edilmesinde kullaniriz.
+
+
+| Selector |
+|--|
+|Selector, kubernetes üzerindeki nesneleri aramak için kullanılmaktadır|
+|Eavality-based ve set-based şeklinde iki farklı türü bulunmaktadır.|
+|Birden fazla kriter varsa bunlar (.) virgül ile ayrılmaktadır|
+|Etiket arama kriterine kesinlikle uyulmalıdır |
+
+
+
+Namespace
+
+Kubernetes içerisinde ki POD'ları veya objeleri ayirmamiza/gruplandirmamiza imkan sağlayan teknolojidir. Kubernetes cluster içerisinde farklı virtual cluster alanları oluşturmak için kullanılmaktadır 
+
+her proje icin ayri olusturulan klasore benzetebiliriz
+
+|Namespace|
+|--|
+|Kubernetes içerisindeki objeleri ayırmamıza gruplamamıza imkan sağlayan teknolojidir |
+|Kubernetes ilk kurulduğunda 4 namespace dahili olarak gelmektedir.
+  • default
+
+  • kube-system
+  
+  • kube-public
+  
+  • Kube-node-lease
+|
+|Namespacelar sayesinde cluster kaynakları farklı projeler için bölünebilmektedir |
+|Namespace isimleri birbirinden benzersiz olmak zorundadır |
