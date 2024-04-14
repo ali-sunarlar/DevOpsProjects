@@ -204,10 +204,10 @@ sudo systemctl enable --now kubelet
 cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
 name=Kubernetes
-baseurl=https://pkgs.k8s.io/core:/stable:/v1.29/rpm/
+baseurl=https://pkgs.k8s.io/core:/stable:/v1.28/rpm/
 enabled=1
 gpgcheck=1
-gpgkey=https://pkgs.k8s.io/core:/stable:/v1.29/rpm/repodata/repomd.xml.key
+gpgkey=https://pkgs.k8s.io/core:/stable:/v1.28/rpm/repodata/repomd.xml.key
 EOF
 ```
 
@@ -769,7 +769,7 @@ Kubernetes içerisinde ki POD'ları veya objeleri ayirmamiza/gruplandirmamiza im
 
 her proje icin ayri olusturulan klasore benzetebiliriz
 
-Namespace
+
 Kubernetes içerisindeki objeleri ayırmamıza gruplamamıza imkan sağlayan teknolojidir
 
 Kubernetes ilk kurulduğunda 4 namespace dahili olarak gelmektedir.
@@ -785,3 +785,32 @@ Kubernetes ilk kurulduğunda 4 namespace dahili olarak gelmektedir.
 Namespacelar sayesinde cluster kaynakları farklı projeler için bölünebilmektedir
 
 Namespace isimleri birbirinden benzersiz olmak zorundadır
+
+
+
+
+ReplicationController,ReplicaSet (Bu iki nesnenin amacı belirli bir zamanda çalışan podlarin kararlı ve replika bir şekilde çalışmasını sağlamaktadır )
+
+ReplicationController sonradan ReplicaSet ve deployment olarak ikiye ayrılmıştır
+
+ReplicaSet(Self-Hearing, Scaling, Desired State)
+
+Deployment (uygulamamızın kopya sayısını ve image versiyon güncellemesi olduğunda güncelleme stratejilerini belirleyen , yanlış bir durum olduğunda da güncel versiondan önceki versiyonlara geçiş yapmamızı sağlayan nesnelerdir) ReplicaSet nesnesiyle birlikte calismaktadir. (Rolling update ve rollback)
+
+Service
+
+Service nesnesi uygulamalar arasında iletişim kurmamızı veya cluster dışından gelen isteklerin Podlara dengeli bir şekilde dağıtılmasını sağlayan bir objedir (Mantıksal bir grup oluşturarak kullanıcıların yada uygulamaların podlara güvenli bir şekilde erişmesini sağlayan bir nesnedir. ) Static Ip Address - Load Balancing
+
+Uc service turu bulunur (ClusterIP,NodePort,Load Balancer)
+
+
+Network
+
+•Aynı Pod içerisindeki Container’ların iletişimi
+
+• Aynı Node içerisindeki Pod’ların iletişimi
+
+• Farklı Node’lar arasındaki Pod’ların iletişimi
+
+• Service ve Pod’lar arasında ki iletişim
+
