@@ -406,6 +406,10 @@ Yeni eklenen disk lsblk vs gozukmezse. En gözükmezse reboot edilir.
 [root@rocky2 ~]# rescan-scsi-bus
 -bash: rescan-scsi-bus: command not found
 
+for HOST in /sys/class/scsi_host/host*/scan; do echo "- - -" >  ${HOST}; done
+
+echo 1 > /sys/block/sdd/device/rescan
+
 [root@rocky2 ~]# udevadm trigger
 
 #fiziksel donanımlarla ilgili log'lar görüntülenebilir.
