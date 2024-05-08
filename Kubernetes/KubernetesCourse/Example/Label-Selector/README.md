@@ -87,5 +87,5 @@ kubectl get pods -l 'app in (prodapp),tier notin (frontend)' --show-labels
 ***
 #### Selector kullanarak Label üzerinden POD Listeleme
 ```
-kubectl get pods -l 'app notin prodapp)' --show-labels
+kubectl get pods -l 'app notin (prodapp)' --show-labels
 ```

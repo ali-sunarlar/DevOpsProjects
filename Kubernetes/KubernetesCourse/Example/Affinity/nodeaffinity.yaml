@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nodeaffinitypod1
+spec:
+  containers:
+  - name: nodeaffinity1
+    image: nginx:1.16-alpine
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+        # City == Ankara
+          - key: City
+            operator: In #In, NotIn, Exists, DoesNotExist
+            values:
+            - Ankara
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nodeaffinitypod2
+spec:
+  containers:
+  - name: nodeaffinity2
+    image: nginx:1.16-alpine
+  affinity:
+    nodeAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 1
+        preference:
+          matchExpressions:
+          # City == Istanbul or City == Ankara or Any Other Node
+          - key: City
+            operator: In
+            values:
+            - Ankara
+      - weight: 2
+        preference:
+          matchExpressions:
+          - key: City
+            operator: In
+            values:
+            - Istanbul
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nodeaffinitypod3
+spec:
+  containers:
+  - name: nodeaffinity3
+    image: nginx:1.16-alpine
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+        # Zone == If Node has this label
+          - key: Zone
+            operator: Exists #In, NotIn, Exists, DoesNotExist
