@@ -141,6 +141,153 @@ kubectl get services --sort-by=.metadata.name
 komutu test etmek amacıyla
 
 
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: tomtom
+spec:
+  containers:
+  - image: tomcat:8.0
+    name: tomtom
+    ports:
+    - containerPort: 80
+  restartPolicy: Always
+```
+YAML dosyasında ki containerPort bilgisi aşağıdaki komut satırından hangisiyle sorgulanır
+
+```sh
+kubectl get pod tomtom -o jsonpath='{.spec.containers[*].ports[*].containerPort}'
+```
+
+..... tanımlı namespace üzerinde durumu running olmayan podları listeler
+
+```sh
+kubectl get pods --field-selector status.phase!=Running
+```
+
+..... app=special label etiketine sahip podların isimlerini listeler
+
+```sh
+kubectl get pods -l app=special --output=jsonpath='{.items[*].metadata.name}'
+```
+
+..... default namespace'inde bulunmayan pod isimlerini name değişkenine aktarıp, ekrana yazdıran
+
+```sh
+## 
+$name=kubectl get pods --all-namespaces --field-selector metadata.namespace=default --output=jsonpath='{.items[*].metadata.name}' 
+## 
+echo $name 
+## İlk satırda pod isimlerini name değişkenine aktarıp ikinci satırda yazdırıyoruz.
+```
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: tomtom
+spec:
+  containers:
+  - image: tomcat:8.0
+    name: tomtom
+    ports:
+    - containerPort: 80
+  restartPolicy: Always
+```
+..... Yukarıdaki YAML dosyasındaki image bilgisini sorgulayıp ekrana yazdıran komuttur
+
+```sh
+## 
+$name=kubectl get pods --field-selector metadata.name=tomtom --output=jsonpath='{.items[*].spec.containers[*].image}' 
+## 
+echo $name
+```
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: tomtom
+spec:
+  containers:
+  - image: tomcat:8.0
+    name: tomtom
+    ports:
+    - containerPort: 80
+  restartPolicy: Always
+Yukarıdaki restartPolicy bilgisi aşağıdaki hangi komut ile öğrenilmektedir
+
+kubectl get pods tomtom --output=jsonpath='{.spec.restartPolicy}'
 
 
 
+... pod bilgisini $name değişkenine aktarıp loglarını görüntüleyen komuttur
+
+
+$name=kubectl get pods --field-selector metadata.name=tomtom --output=jsonpath='{.items[*].metadata.name}' 
+
+kubectl logs $name
+
+.... restart policy ayarı always olan ve çalışan podları list.txt dosyasına kaydeden komuttur
+
+kubectl get pods --field-selector=status.phase=Running,spec.restartPolicy=Always > list.txt
+
+
+.... custom-columns kullanılarak pod isimlerini ve pod durumlarını listeleyen komuttur
+
+kubectl get po -o=custom-columns="POD_NAME:.metadata.name, POD_STATUS:.status.containerStatuses[].state"
+
+POD_NAME    POD_STATUS
+tomtom     map[running:map[startedAt:2024-05-08T15:37:26Z]]
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+spec:
+  containers:
+  - args:
+    - /bin/sh
+    - -c
+    - while true; do echo hello; echo hello again;done
+    image: busybox
+    name: mypod
+  restartPolicy: Never
+Yukarıdaki YAML dosyası komut yazım şekli aşağıdakilerden hangisidir
+
+kubectl run busybox --image=busybox --restart=Never --dry-run=client -o yaml -- /bin/sh -c "while true; do echo hello; echo hello again;done" > yamlfile.yaml
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: log-writer-reader1
+spec:
+  containers:
+    - name: log-writer
+      image: busybox
+      command: ['sh', '-c', 'sleep 3600']
+    - name: log-reader
+      image: busybox
+      command: ['sh', '-c', 'echo The app is running! && sleep 3600']
+log-writer-reader1 pod içerisindeki log-reader command değerini sorgulayan komut aşağıdakilerden hangisidir
+
+kubectl get pod log-writer-reader -o jsonpath='{.spec.containers[1].command}'
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: log-writer-reader2
+spec:
+  containers:
+    - name: log-writer
+      image: busybox
+      command: ['sh', '-c', 'sleep 3600']
+    - name: log-reader
+      image: busybox
+      command: ['sh', '-c', 'sleep 3600']
+log-writer-reader2 pod içerisindeki log-writer containerID değerini sorgulayan komut aşağıdakilerden hangisidir
+
+kubectl get pod log-writer-reader -o jsonpath='{.status.containerStatuses[0].containerID}'

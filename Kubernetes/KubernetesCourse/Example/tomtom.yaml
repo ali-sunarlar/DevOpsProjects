@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: tomtom
+spec:
+  containers:
+  - image: tomcat:8.0
+    name: tomtom
+    ports:
+    - containerPort: 80
+  restartPolicy: Always
