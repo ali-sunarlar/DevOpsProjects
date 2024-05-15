@@ -48,3 +48,18 @@ Hostpath volume, node Uzerinde olusturulan bir dosya yada dizini pod içerisine 
 kubectl describe pods volume-test
 ```
 
+ReadWriteOnce - volume sadece tek bir node üzerine bağlanabilir 
+
+ReadOnlyMany - volume birden fazla node’a sadece okunabilir modda bağlanır
+
+ReadWriteMany - volume birden fazla node’a hem okuma hemde yazma modunda bağlanabilir
+
+ReadWriteOncePod- volume tek bir Poda okuma-yazma şeklinde bağlanabilmektedir
+
+
+Retain --> Pod silinse dahi datalar kalıcı olmaktadır.
+
+Recycle --> Güncel sürümlerden kaldirilmistir. Volume ile işimiz bittiğinde volume silinmez ama içindeki tüm datalar silinir
+
+Delete --> Pod kaldirildiginda volume ve icindeki tum datalar ile silinir
+
