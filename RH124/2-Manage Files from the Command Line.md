@@ -726,7 +726,7 @@ filea1.txt filea2.txt fileb.txt filec.txt
 
 #### Variable Expansion
 
-değişken atamları sunucu kapatılıp açılıncaya geçerlidir.
+değişken atamalari sunucu kapatılıp açılıncaya geçerlidir.
 
 ```sh
 [root@rocky2 glob]# vi username.sh
