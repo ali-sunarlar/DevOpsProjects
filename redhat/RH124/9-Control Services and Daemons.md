@@ -219,3 +219,44 @@ Service States in the Output of systemctl
 
 LAB 285 --> 288
 LAB 293 --> 296
+
+
+
+## Verify the Status of a Service
+
+The command returns the service unit state, which is usually active or inactive.
+
+```sh
+[root@host ~]# systemctl is-active sshd.service
+active
+```
+
+The command returns whether the service unit is enabled to start at boot time, and is usually
+enabled or disabled.
+
+```sh
+[root@host ~]# systemctl is-enabled sshd.service
+enabled
+```
+
+The command returns active if the service is properly running, or failed if an error occurred
+during startup. If the unit was stopped, it returns unknown or inactive.
+
+```sh
+[root@host ~]# systemctl is-failed sshd.service
+active
+```
+
+To list all the failed units
+
+```sh
+[root@host ~]# systemctl --failed --type=service
+```
+
+
+
+# Control System Services
+
+## Start and Stop Services
+
+
