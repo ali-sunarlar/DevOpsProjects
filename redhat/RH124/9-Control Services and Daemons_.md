@@ -169,3 +169,18 @@ Service Unit Information
 | Status | More information about the service. |
 | Process | More information about related processes. |
 | CGroup | More information about related control groups. |
+
+
+
+Service States in the Output of systemctl
+
+| Keyword Description
+loaded The unit configuration file is processed.
+active (running) The service is running with continuing processes.
+active (exited) The service successfully completed a one-time configuration.
+active (waiting) The service is running but waiting for an event.
+inactive The service is not running.
+enabled The service starts at boot time.
+disabled The service is not set to start at boot time.
+static The service cannot be enabled, but an enabled unit might start it
+automatically.
