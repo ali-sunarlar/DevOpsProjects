@@ -52,7 +52,7 @@ The short description of the unit.(açıklama)
   dracut-initqueue.service               loaded    inactive dead    dracut initqueue hook
 ```
 
-socket bazlı servislerin çıktısı
+socket bazlı servislerin çıktısı. Ağ-Network üzerinden kullanılıyorsa
 
 ```sh
 [user@rocky2 ~]$ systemctl list-units --type=socket
@@ -66,6 +66,14 @@ socket bazlı servislerin çıktısı
   systemd-journald-dev-log.socket loaded active running   Journal Socket (/dev/log)
 
 ```
+
+bütün servislerin çıktısı.
+
+Loaded memory e yüklü ve çalışmaya hazır olduğunu gösterir
+
+Active yapıda yüklü olduğunu gösterir
+
+Sub service nin şuanki durumu gösterir
 
 
 
@@ -126,6 +134,15 @@ COMMANDS
 ```
 
 
+service komutu
+
+```sh
+[root@rocky2 ~]# service
+Usage: service < option > | --status-all | [ service_name [ command | --full-restart ] ]
+```
+
+
+
 ## View Service States
 
 
@@ -134,17 +151,22 @@ COMMANDS
 
 [user@rocky2 ~]$ systemctl status sshd.service
 ● sshd.service - OpenSSH server daemon
-     Loaded: loaded (/usr/lib/systemd/system/sshd.service; enabled; preset: enabled)
+      #bu kısım memor yüklü çalışmaya hazır bir service     #1. enabled OS kapanip acildiginda devreye girecek 2. enabled service kurulur kurulmaz devreye girecek anlamindadir. 2. enabled değiştirelemez.
+     Loaded: loaded (/usr/lib/systemd/system/sshd.service;  enabled; preset: enabled)
+    #running yerine excited bulunuyor tek sefer calismasi icin tanımlanmıştır.
+    #running active waiting bulunuyorsa bir taskın tamamlanması bekleniyordur.
      Active: active (running) since Fri 2024-03-08 19:19:14 +03; 2 days ago
        Docs: man:sshd(8)
              man:sshd_config(5)
+             #process id
    Main PID: 749 (sshd)
       Tasks: 1 (limit: 10834)
      Memory: 6.3M
         CPU: 13.761s
+        #CGroup --> diğer servislerden izole bir şekilde kaynak tüketimi sağlanır. Kaynak çakışması ve service izolesi sağlanır.
      CGroup: /system.slice/sshd.service
              └─749 "sshd: /usr/sbin/sshd -D [listener] 0 of 10-100 startups"
-
+#Son 10 log
 Mar 08 19:19:14 rocky2.lab.example.com sshd[749]: Server listening on :: port 22.
 Mar 08 19:19:14 rocky2.lab.example.com systemd[1]: Started OpenSSH server daemon.
 Mar 08 19:22:25 rocky2.lab.example.com sshd[1274]: Accepted password for user from 192.168.2.1 port 60782 ssh2
@@ -174,13 +196,116 @@ Service Unit Information
 
 Service States in the Output of systemctl
 
-| Keyword Description
-loaded The unit configuration file is processed.
-active (running) The service is running with continuing processes.
-active (exited) The service successfully completed a one-time configuration.
-active (waiting) The service is running but waiting for an event.
-inactive The service is not running.
-enabled The service starts at boot time.
-disabled The service is not set to start at boot time.
-static The service cannot be enabled, but an enabled unit might start it
-automatically.
+| Keyword | Description |
+| loaded | The unit configuration file is processed. |
+| active (running) | The service is running with continuing processes. |
+| active (exited) | The service successfully completed a one-time configuration. |
+| active (waiting) | The service is running but waiting for an event. |
+| inactive | The service is not running. |
+| enabled | The service starts at boot time. |
+| disabled | The service is not set to start at boot time. |
+| static | The service cannot be enabled, but an enabled unit might start it automatically. |
+
+
+
+## Verify the Status of a Service
+
+The command returns the service unit state, which is usually active or inactive.
+
+```sh
+[root@host ~]# systemctl is-active sshd.service
+active
+```
+
+The command returns whether the service unit is enabled to start at boot time, and is usually
+enabled or disabled.
+
+```sh
+[root@host ~]# systemctl is-enabled sshd.service
+enabled
+```
+
+The command returns active if the service is properly running, or failed if an error occurred
+during startup. If the unit was stopped, it returns unknown or inactive.
+
+```sh
+[root@host ~]# systemctl is-failed sshd.service
+active
+```
+
+To list all the failed units
+
+```sh
+[root@host ~]# systemctl --failed --type=service
+```
+
+
+
+# Control System Services
+
+## Start and Stop Services
+
+```sh
+[root@host ~]# systemctl status sshd.service
+● sshd.service - OpenSSH server daemon
+ Loaded: loaded (/usr/lib/systemd/system/sshd.service; enabled; vendor preset:
+ enabled)
+ Active: active (running) since Wed 2022-03-23 11:58:18 EDT; 2min 56s ago
+...output omitted...
+```
+
+durdurmak icin
+
+```sh
+[root@host ~]# systemctl stop sshd.service
+```
+
+baslatmak icin
+
+```sh
+[root@host ~]# systemctl start sshd
+```
+
+restart etmek icin
+
+```sh
+[root@host ~]# systemctl restart sshd.service
+```
+
+örnek olarak nginx'de worker connections sayisi güncellendi. Çalışan nginx servisinde yapılan bu config degişikliğinin hemen yansıması ve aktif connection'ları düşürmeden yapmak icin
+
+```sh
+[root@host ~]# systemctl reload sshd.service
+```
+
+The command reloads the configuration
+changes if the reloading function is available. Otherwise, the command restarts the service to
+implement the new configuration changes:
+
+```sh
+[root@host ~]# systemctl reload-or-restart sshd.service
+```
+
+## List Unit Dependencies
+
+
+```sh
+[root@host ~]# systemctl stop cups.service
+Warning: Stopping cups, but it can still be activated by:
+ cups.path
+ cups.socket
+```
+
+
+
+```sh
+[root@host ~]# systemctl list-dependencies sshd.service
+sshd.service
+● ├─system.slice
+● ├─sshd-keygen.target
+● │ ├─sshd-keygen@ecdsa.service
+● │ ├─sshd-keygen@ed25519.service
+● │ └─sshd-keygen@rsa.service
+● └─sysinit.target
+...output omitted...
+```
