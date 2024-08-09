@@ -288,6 +288,7 @@ implement the new configuration changes:
 
 ## List Unit Dependencies
 
+bagımlılıkları listeleme
 
 ```sh
 [root@host ~]# systemctl stop cups.service
@@ -309,3 +310,96 @@ sshd.service
 ● └─sysinit.target
 ...output omitted...
 ```
+
+
+
+
+## Mask and Unmask Services
+
+service kitleme. Eğer kitleme yapıldıysa root kullanıcısı olsa bile start vs bir şey yapılamaz
+
+```sh
+[root@host ~]# systemctl mask sendmail.service
+Created symlink /etc/systemd/system/sendmail.service → /dev/null.
+```
+
+görüntüleme
+
+```sh
+[root@host ~]# systemctl list-unit-files --type=service
+UNIT FILE STATE
+...output omitted...
+sendmail.service masked
+...output omitted...
+```
+
+start yapılamıyor
+
+```sh
+[root@host ~]# systemctl start sendmail.service
+Failed to start sendmail.service: Unit sendmail.service is masked.
+```
+
+```sh
+[root@host ~]# systemctl unmask sendmail
+Removed /etc/systemd/system/sendmail.service.
+```
+
+
+## Enable Services to Start or Stop at Boot
+
+You can create or remove these links by using the systemctl
+command with the enable or disable option.
+
+
+```sh
+[root@root ~]# systemctl enable sshd.service
+Created symlink /etc/systemd/system/multi-user.target.wants/sshd.service → /usr/
+lib/systemd/system/sshd.service.
+```
+
+This command creates a symbolic link from the service unit file, usually in the /usr/lib/
+systemd/system directory, to the disk location where the systemd command looks for files, in
+the /etc/systemd/system/TARGETNAME.target.wants directory. Enabling a service does
+not start the service in the current session. To start the service and enable it to start automatically
+during boot, you can execute both the systemctl start and systemctl enable commands,
+or use the equivalent systemctl enable --now command.
+
+
+```sh
+[root@root ~]# systemctl enable --now sshd.service
+Created symlink /etc/systemd/system/multi-user.target.wants/sshd.service → /usr/
+lib/systemd/system/sshd.service.
+```
+
+disabled yapma ve kontrol etme
+
+```sh
+[root@host ~]# systemctl disable --now sshd.service
+Removed /etc/systemd/system/multi-user.target.wants/sshd.service.
+
+```
+
+durumunu kontrol etme
+
+```sh
+[root@host ~]# systemctl is-enabled sshd.service
+enabled
+```
+
+Useful Service Management Commands
+
+|   Command |  Task |
+|--|--|
+| systemctl status UNIT | View detailed information about a unit's state.|
+| systemctl stop UNIT | Stop a service on a running system. |
+| systemctl start UNIT | Start a service on a running system. |
+| systemctl restart UNIT | Restart a service on a running system. |
+| systemctl reload UNIT | Reload the configuration file of a running service. |
+| systemctl mask UNIT | Disable a service from being started, both manually and at boot. |
+| systemctl unmask UNIT | Make a masked service available. |
+| systemctl enable UNIT | Configure a service to start at boot time. Use the --now option to also start the service. |
+| systemctl disable UNIT | Disable a service from starting at boot time. Use the --now option to also stop the service. |
+
+
+
