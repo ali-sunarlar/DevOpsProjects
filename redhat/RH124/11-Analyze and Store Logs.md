@@ -25,7 +25,7 @@ Temel seviyede OS loglama için kullanılır. Toplamak, ayrıştırmak için kul
 
 4-Gerekli aksiyonların alınması için log'ların yakalanması sağlanır
 
-Overview of Syslog Priorities
+Overview of Syslog Facilities
 
 |Code |  Facility | Facility description |
 |-----|-----------|----------------------|
@@ -44,8 +44,18 @@ Overview of Syslog Priorities
 | 16-23 | local0 to local7 | Custom local messages |
 
 
+Overview of Syslog Priorities
 
-
+| Code | Priority | Priority description |
+|------|----------|----------------------|
+| 0 | emerg | System is unusable 
+| 1 | alert | Action must be taken immediately |
+| 2 | crit | Critical condition |
+| 3 | err | Non-critical error condition |
+| 4 | warning | Warning condition |
+| 5 | notice | Normal but significant event |
+| 6 | info | Informational event |
+| 7 | debug | Debugging-level message |
 
 ```ssh
 [root@host ~]# vi /etc/rsyslog.conf
