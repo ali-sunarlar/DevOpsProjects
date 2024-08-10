@@ -57,7 +57,18 @@ Overview of Syslog Priorities
 | 6 | info | Informational event |
 | 7 | debug | Debugging-level message |
 
-```ssh
+
+Hangi path redirect yapıldığı belirtiliyor.
+
+For example, the following line in the /etc/rsyslog.d file would record messages that are sent
+to the authpriv facility at any priority to the /var/log/secure file:
+
+```sh
+authpriv.* /var/log/secure
+```
+
+
+```sh
 [root@host ~]# vi /etc/rsyslog.conf
 
 #### RULES ####
@@ -83,7 +94,7 @@ local7.*
 
 ## Log File Rotation
 
-```ssh
+```sh
 [root@host ~]# vi /etc/rsyslog.conf
 Append 
 *.*@@logforwardingip:port // Bu tüm configleri yönlendirir.
@@ -91,12 +102,12 @@ mail.*@@logforwardingip:port // sadece mail loglarını yönlendirir.
 ```
 
 ## Monitor Log Events
-```ssh
+```sh
 [root@host ~]# tail -f /var/log/secure
 ```
 # Review System Journal Entries
 
-```ssh
+```sh
 [root@host ~]# journalctl
 ...output omitted...
 Mar 15 04:42:16 host.lab.example.com systemd[2127]: Listening on PipeWire
@@ -179,7 +190,7 @@ Mar 15 05:04:20 host.lab.example.com systemd[1]: Starting Hostname Service...
 
 ## Tarih Saat
 
-```ssh
+```sh
 [user@host ~]$ timedatectl
  Local time: Wed 2022-03-16 05:53:05 EDT
  Universal time: Wed 2022-03-16 09:53:05 UTC
