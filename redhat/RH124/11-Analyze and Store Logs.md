@@ -2,6 +2,8 @@
 
 
 ## Describe System Log Architecture
+
+
 |  Logs             | Detail                                                                  |
 | ----------------- | ----------------------------------------------------------------------- | 
 | /var/log/messages | Sistem günlüğü mesajlarının çoğu burada günlüğe kaydedilir. |
@@ -11,6 +13,40 @@
 | /var/log/boot.log | Sunucunun açılışındaki oluşan logları tutar | 
 
 ## Sample Rules of the rsyslog Service
+
+
+Temel seviyede OS loglama için kullanılır. Toplamak, ayrıştırmak için kullanılır. 
+
+1-Toplamak
+
+2-Depolamak
+
+3-(Kural setlerine göre)Analiz edilmesi için parse edilmesi
+
+4-Gerekli aksiyonların alınması için log'ların yakalanması sağlanır
+
+Overview of Syslog Priorities
+
+|Code |  Facility | Facility description |
+|-----|-----------|----------------------|
+| 0  | kern | Kernel messages|
+| 1  | user  | User-level messages |
+| 2 | mail | Mail system messages |
+| 3 | daemon | System daemons messages |
+| 4 | auth | Authentication and security messages |
+| 5 | syslog | Internal syslog messages |
+| 6 | lpr | Printer messages |
+| 7 | news | Network news messages |
+| 8 | uucp | UUCP protocol messages |
+| 9 | cron | Clock daemon messages |
+| 10 | authpriv | Non-system authorization messages |
+| 11 | ftp | FTP protocol messages |
+| 16-23 | local0 to local7 | Custom local messages |
+
+
+
+
+
 ```ssh
 [root@host ~]# vi /etc/rsyslog.conf
 
@@ -34,13 +70,16 @@ uucp,news.crit /var/log/spooler
 # Save boot messages also to boot.log
 local7.* 
 ```
+
 ## Log File Rotation
+
 ```ssh
 [root@host ~]# vi /etc/rsyslog.conf
 Append 
 *.*@@logforwardingip:port // Bu tüm configleri yönlendirir.
 mail.*@@logforwardingip:port // sadece mail loglarını yönlendirir.
 ```
+
 ## Monitor Log Events
 ```ssh
 [root@host ~]# tail -f /var/log/secure
