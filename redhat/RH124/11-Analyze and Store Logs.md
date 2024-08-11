@@ -532,11 +532,190 @@ TRUSTED JOURNAL FIELDS
 
 System Journal Storage
 
+You can change the configuration settings
+of the systemd-journald service in the /etc/systemd/journald.conf file so that the
+journals persist across a reboot.
+
+The Storage parameter in the /etc/systemd/journald.conf file defines whether to
+store system journals in a volatile manner or persistently across a reboot. Set this parameter to
+persistent, volatile, auto, or none as follows:
+
+• persistent: Stores journals in the /var/log/journal directory, which persists across
+reboots. If the /var/log/journal directory does not exist, then the systemd-journald
+service creates it.
+
+• volatile: Stores journals in the volatile /run/log/journal directory. As the /run file
+system is temporary and exists only in the runtime memory, the data in it, including system
+journals, does not persist across a reboot.
+
+• auto: If the /var/log/journal directory exists, then the systemd-journald service uses
+persistent storage; otherwise it uses volatile storage. This action is the default if you do not set
+the Storage parameter.
+
+• none: Do not use any storage. The system drops all logs, but you can still forward the logs.
+
+
+```sh
+[user@host ~]$ journalctl | grep -E 'Runtime Journal|System Journal'
+Mar 15 04:21:14 localhost systemd-journald[226]: Runtime Journal (/run/log/
+journal/4ec03abd2f7b40118b1b357f479b3112) is 8.0M, max 113.3M, 105.3M free.
+Mar 15 04:21:19 host.lab.example.com systemd-journald[719]: Runtime Journal (/run/
+log/journal/4ec03abd2f7b40118b1b357f479b3112) is 8.0M, max 113.3M, 105.3M free.
+Mar 15 04:21:19 host.lab.example.com systemd-journald[719]: System Journal (/run/
+log/journal/4ec03abd2f7b40118b1b357f479b3112) is 8.0M, max 4.0G, 4.0G free.
+
+```
+
+Configure Persistent System Journals
+
+To configure the systemd-journald service to preserve system journals persistently across
+a reboot, set the Storage parameter to the persistent value in the /etc/systemd/
+journald.conf file. Run your chosen text editor as the superuser to edit the /etc/systemd/
+journald.conf file.
+
+Log toplama, saklama, rotasyonlar(Otomatikleştirme için)
 
 
 
+```sh
+[root@rocky2 ~]# cat /etc/systemd/journald.conf
+#  This file is part of systemd.
+#
+#  systemd is free software; you can redistribute it and/or modify it under the
+#  terms of the GNU Lesser General Public License as published by the Free
+#  Software Foundation; either version 2.1 of the License, or (at your option)
+#  any later version.
+#
+# Entries in this file show the compile time defaults. Local configuration
+# should be created by either modifying this file, or by creating "drop-ins" in
+# the journald.conf.d/ subdirectory. The latter is generally recommended.
+# Defaults can be restored by simply deleting this file and all drop-ins.
+#
+# Use 'systemd-analyze cat-config systemd/journald.conf' to display the full config.
+#
+# See journald.conf(5) for details.
 
-## Tarih Saat
+[Journal]
+#auto --> otomatik olarak saklanır, silinir
+#none --> OS kapanıp açıldığında sıfırlanır
+#persistent --> log'ları kalıcı olarak saklar log boyutları aşsa bile
+#Storage=auto
+#Compress=yes
+#Seal=yes
+#SplitMode=uid
+#SyncIntervalSec=5m
+#RateLimitIntervalSec=30s
+#RateLimitBurst=10000
+#SystemMaxUse=
+#SystemKeepFree=
+#SystemMaxFileSize=
+#SystemMaxFiles=100
+#RuntimeMaxUse=
+#RuntimeKeepFree=
+#RuntimeMaxFileSize=
+#RuntimeMaxFiles=100
+#MaxRetentionSec=
+#MaxFileSec=1month
+#ForwardToSyslog=no
+#ForwardToKMsg=no
+#ForwardToConsole=no
+#ForwardToWall=yes
+#TTYPath=/dev/console
+#MaxLevelStore=debug
+#MaxLevelSyslog=debug
+#MaxLevelKMsg=notice
+#MaxLevelConsole=info
+#MaxLevelWall=emerg
+#LineMax=48K
+#ReadKMsg=yes
+Audit=
+```
+
+Restart the systemd-journald service to apply the configuration changes.
+
+```sh
+[root@host ~]# systemctl restart systemd-journald
+```
+
+If the systemd-journald service successfully restarts, then the service creates the
+/var/log/journal directory and it contains one or more subdirectories. These subdirectories
+have hexadecimal characters in their long names and contain files with the .journal extension.
+The .journal binary files store the structured and indexed journal entries.
+
+```sh
+[root@host ~]# ls /var/log/journal
+4ec03abd2f7b40118b1b357f479b3112
+[root@host ~]# ls /var/log/journal/4ec03abd2f7b40118b1b357f479b3112
+system.journal user-1000.journal
+```
+
+To limit the output to
+a specific system boot, use the journalctl command -b option. The following journalctl
+command retrieves the entries from the first system boot only:
+
+```sh
+[root@host ~]# journalctl -b 1
+...output omitted...
+
+[root@host ~]# journalctl -b 2
+...output omitted...
+```
+
+You can list the system boot events that the journalctl command recognizes by using the
+--list-boots option.
+
+```sh
+[root@rocky2 ~]# journalctl --list-boots
+IDX BOOT ID                          FIRST ENTRY                 LAST ENTRY
+  0 a49ad790b90f4abc98e8133743e10c30 Thu 2024-08-08 16:15:15 +03 Fri 2024-08-09 02:56:28 +03
+
+
+
+[root@host ~]# journalctl --list-boots
+ -6 27de... Wed 2022-04-13 20:04:32 EDT—Wed 2022-04-13 21:09:36 EDT
+ -5 6a18... Tue 2022-04-26 08:32:22 EDT—Thu 2022-04-28 16:02:33 EDT
+ -4 e2d7... Thu 2022-04-28 16:02:46 EDT—Fri 2022-05-06 20:59:29 EDT
+ -3 45c3... Sat 2022-05-07 11:19:47 EDT—Sat 2022-05-07 11:53:32 EDT
+ -2 dfae... Sat 2022-05-07 13:11:13 EDT—Sat 2022-05-07 13:27:26 EDT
+ -1 e754... Sat 2022-05-07 13:58:08 EDT—Sat 2022-05-07 14:10:53 EDT
+ 0 ee2c... Mon 2022-05-09 09:56:45 EDT—Mon 2022-05-09 12:57:21 EDT
+```
+
+The following journalctl command retrieves the entries from the current system boot only:
+
+```sh
+[root@host ~]# journalctl -b
+[root@rocky2 ~]# journalctl -b
+Aug 08 16:15:15 rocky1 kernel: Linux version 5.14.0-427.18.1.el9_4.x86_64 (mockbuild@iad1-prod-build001.bld.equ.rockylinux.org) (gcc (GCC) 11.4.1 20231218 (Red H>
+Aug 08 16:15:15 rocky1 kernel: The list of certified hardware and cloud instances for Enterprise Linux 9 can be viewed at the Red Hat Ecosystem Catalog, https://>
+Aug 08 16:15:15 rocky1 kernel: Command line: BOOT_IMAGE=(hd0,msdos1)/vmlinuz-5.14.0-427.18.1.el9_4.x86_64 root=/dev/mapper/rl-root ro crashkernel=1G-4G:192M,4G-6>
+Aug 08 16:15:15 rocky1 kernel: x86/fpu: Supporting XSAVE feature 0x001: 'x87 floating point registers'
+Aug 08 16:15:15 rocky1 kernel: x86/fpu: Supporting XSAVE feature 0x002: 'SSE registers'
+Aug 08 16:15:15 rocky1 kernel: x86/fpu: Supporting XSAVE feature 0x004: 'AVX registers'
+Aug 08 16:15:15 rocky1 kernel: x86/fpu: xstate_offset[2]:  576, xstate_sizes[2]:  256
+Aug 08 16:15:15 rocky1 kernel: x86/fpu: Enabled xstate features 0x7, context size is 832 bytes, using 'compacted' format.
+Aug 08 16:15:15 rocky1 kernel: signal: max sigframe size: 1776
+Aug 08 16:15:15 rocky1 kernel: BIOS-provided physical RAM map:
+Aug 08 16:15:15 rocky1 kernel: BIOS-e820: [mem 0x0000000000000000-0x0000000000098bff] usable
+Aug 08 16:15:15 rocky1 kernel: BIOS-e820: [mem 0x0000000000098c00-0x000000000009ffff] reserved
+Aug 08 16:15:15 rocky1 kernel: BIOS-e820: [mem 0x00000000000dc000-0x00000000000fffff] reserved
+Aug 08 16:15:15 rocky1 kernel: BIOS-e820: [mem 0x0000000000100000-0x000000003fedffff] usable
+Aug 08 16:15:15 rocky1 kernel: BIOS-e820: [mem 0x000000003fee0000-0x000000003fefefff] ACPI data
+Aug 08 16:15:15 rocky1 kernel: BIOS-e820: [mem 0x000000003feff000-0x000000003fefffff] ACPI NVS
+Aug 08 16:15:15 rocky1 kernel: BIOS-e820: [mem 0x000000003ff00000-0x000000003fffffff] usable
+Aug 08 16:15:15 rocky1 kernel: BIOS-e820: [mem 0x00000000f0000000-0x00000000f7ffffff] reserved
+```
+
+
+
+# Maintain Accurate Time
+
+
+## Administer Local Clocks and Time Zones
+
+The timedatectl command shows an overview of the current time-related system settings,
+including the current time, time zone, and NTP synchronization settings of the system.
+
 
 ```sh
 [user@host ~]$ timedatectl
@@ -547,7 +726,12 @@ System Journal Storage
 System clock synchronized: yes
  NTP service: active
  RTC in local TZ: no
+```
 
+You can list a database of time zones with the timedatectl command list-timezones
+option.
+
+```sh
 [user@host ~]$ timedatectl list-timezones
 Africa/Abidjan
 Africa/Accra
@@ -555,7 +739,13 @@ Africa/Addis_Ababa
 Africa/Algiers
 Africa/Asmara
 Africa/Bamako
+```
 
+the following timedatectl
+command updates the current time zone to America/Phoenix.
+
+
+```sh
 [root@host ~]# timedatectl set-timezone America/Phoenix
 [root@host ~]# timedatectl
  Local time: Wed 2022-03-16 03:05:55 MST
@@ -565,7 +755,13 @@ Africa/Bamako
 System clock synchronized: yes
  NTP service: active
  RTC in local TZ: no
+```
 
+Use the timedatectl command set-time option to change the system's current time. You
+might specify the time in the "YYYY-MM-DD hh:mm:ss" format, where you can omit either the
+date or time. For example, the following timedatectl command changes the time to 09:00:00.
+
+```sh
 [root@host ~]# timedatectl set-time 9:00:00
 [root@host ~]# timedatectl
  Local time: Fri 2019-04-05 09:00:27 MST
@@ -575,11 +771,20 @@ System clock synchronized: yes
 System clock synchronized: yes
  NTP service: active
  RTC in local TZ: no
+```
 
+The timedatectl command set-ntp option enables or disables NTP synchronization for
+automatic time adjustment. The option requires either a true or false argument to turn it on or
+off. For example, the following timedatectl command turns off NTP synchronization.
+
+```sh
 [root@host ~]# timedatectl set-ntp false
+```
+
+# Configure and Monitor the chronyd Service
 
 
-## Configure and Monitor the chronyd Service
+
 
 /etc/chrony.conf içerisinden yapılır.
 
