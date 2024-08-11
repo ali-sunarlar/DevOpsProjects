@@ -757,6 +757,67 @@ System clock synchronized: yes
  RTC in local TZ: no
 ```
 
+Universal time değiştirme
+
+```sh
+[root@rocky2 ~]# timedatectl
+               Local time: Fri 2024-08-09 05:47:21 +03
+           Universal time: Fri 2024-08-09 02:47:21 UTC
+                 RTC time: Sun 2024-08-11 02:25:46
+                Time zone: Europe/Istanbul (+03, +0300)
+System clock synchronized: no
+              NTP service: active
+          RTC in local TZ: no
+```
+
+```sh
+[root@rocky2 ~]# timedatectl set-local-rtc 1
+
+[root@rocky2 ~]# timedatectl
+               Local time: Fri 2024-08-09 05:55:43 +03
+           Universal time: Fri 2024-08-09 02:55:43 UTC
+                 RTC time: Fri 2024-08-09 05:55:34
+                Time zone: Europe/Istanbul (+03, +0300)
+System clock synchronized: no
+              NTP service: active
+          RTC in local TZ: yes
+
+Warning: The system is configured to read the RTC time in the local time zone.
+         This mode cannot be fully supported. It will create various problems
+         with time zone changes and daylight saving time adjustments. The RTC
+         time is never updated, it relies on external facilities to maintain it.
+         If at all possible, use RTC in UTC by calling
+         'timedatectl set-local-rtc 0'.
+
+[root@rocky2 ~]# timedatectl set-local-rtc 0
+[root@rocky2 ~]# timedatectl
+               Local time: Fri 2024-08-09 05:56:08 +03
+           Universal time: Fri 2024-08-09 02:56:08 UTC
+                 RTC time: Fri 2024-08-09 02:56:08
+                Time zone: Europe/Istanbul (+03, +0300)
+System clock synchronized: no
+              NTP service: active
+          RTC in local TZ: no
+
+[root@rocky2 ~]# timedatectl set-local-rtc 1 --adjust-system-clock
+[root@rocky2 ~]# timedatectl
+               Local time: Fri 2024-08-09 02:56:51 +03
+           Universal time: Thu 2024-08-08 23:56:51 UTC
+                 RTC time: Fri 2024-08-09 02:56:51
+                Time zone: Europe/Istanbul (+03, +0300)
+System clock synchronized: no
+              NTP service: active
+          RTC in local TZ: yes
+
+Warning: The system is configured to read the RTC time in the local time zone.
+         This mode cannot be fully supported. It will create various problems
+         with time zone changes and daylight saving time adjustments. The RTC
+         time is never updated, it relies on external facilities to maintain it.
+         If at all possible, use RTC in UTC by calling
+         'timedatectl set-local-rtc 0'.
+```
+
+
 Use the timedatectl command set-time option to change the system's current time. You
 might specify the time in the "YYYY-MM-DD hh:mm:ss" format, where you can omit either the
 date or time. For example, the following timedatectl command changes the time to 09:00:00.
@@ -783,8 +844,58 @@ off. For example, the following timedatectl command turns off NTP synchronizatio
 
 # Configure and Monitor the chronyd Service
 
+As an example, with the following server classroom.example.com iburst
+line in the /etc/chrony.conf configuration file, the chronyd service uses the
+classroom.example.com server as the NTP time source.
+
+```sh
+# Use public servers from the pool.ntp.org project.
+...output omitted...
+server classroom.example.com iburst
+...output omitted...
+```
+
+Restart the service after pointing the chronyd service to the classroom.example.com local
+time source
+
+```sh
+[root@host ~]# systemctl restart chronyd
+```
+
+Birden fazla ntp pool tanımlanabilir.
+
+```sh
+[root@host ~]# chronyc sources -v
+ .-- Source mode '^' = server, '=' = peer, '#' = local clock.
+ / .- Source state '*' = current best, '+' = combined, '-' = not combined,
+| / 'x' = may be in error, '~' = too variable, '?' = unusable.
+|| .- xxxx [ yyyy ] +/- zzzz
+|| Reachability register (octal) -. | xxxx = adjusted offset,
+|| Log2(Polling interval) --. | | yyyy = measured offset,
+|| \ | | zzzz = estimated error.
+|| | | \
+MS Name/IP address Stratum Poll Reach LastRx Last sample
+===============================================================================
+^* 172.25.254.254 3 6 17 26 +2957ns[+2244ns] +/- 25ms
 
 
+[root@rocky2 ~]# chronyc sources -v
+
+  .-- Source mode  '^' = server, '=' = peer, '#' = local clock.
+ / .- Source state '*' = current best, '+' = combined, '-' = not combined,
+| /             'x' = may be in error, '~' = too variable, '?' = unusable.
+||                                                 .- xxxx [ yyyy ] +/- zzzz
+||      Reachability register (octal) -.           |  xxxx = adjusted offset,
+||      Log2(Polling interval) --.      |          |  yyyy = measured offset,
+||                                \     |          |  zzzz = estimated error.
+||                                 |    |           \
+MS Name/IP address         Stratum Poll Reach LastRx Last sample
+===============================================================================
+^* ntp.linuxevi.org              2  10   377   317  +1423us[+1137us] +/-   35ms
+^- unn-45-136-155-37.datapa>     3  10   377   186    -18ms[  -18ms] +/-  204ms
+^+ ntp2.home4u.ch                1  10   377   759  -2228us[-2509us] +/-   49ms
+^+ ntp.cbu.edu.tr                2  10   377   276   +721us[ +721us] +/-   98ms
+```
 
 /etc/chrony.conf içerisinden yapılır.
 
