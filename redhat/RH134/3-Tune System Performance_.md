@@ -108,7 +108,7 @@ The performance-boosting profiles include profiles that focus on the following a
  tuning profiles distributed with Red Hat Enterprise Linux 9
 
 | Tuned Profile | Purpose   |
-|--|--|
+|---------------|-----------|
 | balanced | Ideal for systems that require a compromise between power saving and performance. |
 | powersave | Tunes the system for maximum power saving. |
 | throughput-performance | Tunes the system for maximum throughput. |
