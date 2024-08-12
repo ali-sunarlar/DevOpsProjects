@@ -179,6 +179,7 @@ Strms Blocks Compressed Uncompressed Ratio Check Filename
 
 ## Transfer Remote Files with the Secure File Transfer Program
 
+bütün platformlarda genel olarak mevcuttur.
 
 ```sh
 [user@host ~]$ sftp remoteuser@remotehost
@@ -408,9 +409,121 @@ total 32
 ## Synchronize Remote Files and Directories
 
 
+When synchronizing with the rsync command, two standard options are the -v and -a options.
+The rsync command -v or --verbose option provides a more detailed output. This option is
+helpful for troubleshooting and viewing live progress.
+The rsync command -a or --archive option enables "archive mode". This option enables
+recursive copying and turns on many valuable options to preserve most characteristics of the files.
+Archive mode is the same as specifying the following options
 
 
+Options Enabled with rsync -a (Archive Mode)
 
+| Option | Description |
+|--------|-------------|
+| -r, --recursive | Synchronize the whole directory tree recursively |
+| -l, --links | Synchronize symbolic links |
+| -p, --perms | Preserve permissions |
+| -t, --times | Preserve time stamps |
+| -g, --group | Preserve group ownership |
+| -o, --owner | Preserve the owner of the files |
+| -D, --devices | Preserve device files |
+
+Archive mode does not preserve hard links because it might add significant time to the
+synchronization. Use the rsync command -H option to preserve hard links too
+
+For example, to synchronize the contents of the /var/log directory to the /tmp directory
+
+```sh
+[user@host ~]$ su -
+Password: password
+[root@host ~]# rsync -av /var/log /tmp
+receiving incremental file list
+log/
+log/README
+log/boot.log
+...output omitted...
+log/tuned/tuned.log
+sent 11,592,423 bytes received 779 bytes 23,186,404.00 bytes/sec
+total size is 11,586,755 speedup is 1.00
+[user@host ~]$ ls /tmp
+log ssh-RLjDdarkKiW1
+[user@host ~]$
+```
+
+
+In this example, the content of the /var/log/ directory is synchronized into the /tmp directory
+instead of creating the log directory in the /tmp directory
+
+```sh
+[root@host ~]# rsync -av /var/log/ /tmp
+sending incremental file list
+./
+README
+boot.log
+...output omitted...
+tuned/tuned.log
+sent 11,592,389 bytes received 778 bytes 23,186,334.00 bytes/sec
+total size is 11,586,755 speedup is 1.00
+[root@host ~]# ls /tmp
+anaconda dnf.rpm.log-20190318 private
+audit dnf.rpm.log-20190324 qemu-ga
+boot.log dnf.rpm.log-20190331 README
+...output omitted...
+```
+
+In this example, synchronize the local /var/log directory to the /tmp directory on the hosta
+system
+
+-a (dosya izinleri,dosya sahiplikleri, soft link, hard link vs tamamnını korur )
+arşiv modu
+
+-v (ayrıntılı çıktı alınması sağlanır)
+
+-r dizin yetkilerinin kopyalanan tarafda da aynı olmasını sağlar
+
+-z compress yapar(sıkıştırma yapar)
+
+
+```sh
+[root@host ~]# rsync -av /var/log hosta:/tmp
+root@hosta's password: password
+receiving incremental file list
+log/
+log/README
+log/boot.log
+...output omitted...
+sent 9,783 bytes received 290,576 bytes 85,816.86 bytes/sec
+total size is 11,585,690 speedup is 38.57
+```
+
+In the same way, the /var/log remote directory on the hosta machine synchronizes to the /tmp
+directory on the host machine
+
+```sh
+[root@host ~]# rsync -av hosta:/var/log /tmp
+root@hosta's password: password
+receiving incremental file list
+log/boot.log
+log/dnf.librepo.log
+log/dnf.log
+...output omitted...
+sent 9,783 bytes received 290,576 bytes 85,816.86 bytes/sec
+total size is 11,585,690 speedup is 38.57
+```
+
+```sh
+[root@servera ~]# rsync -av /var/log student@serverb:/home/student/serverlogs
+...output omitted...
+student@serverb's password: student
+sending incremental file list
+log/
+log/README -> ../../usr/share/doc/systemd/README.logs
+log/boot.log
+...output omitted...
+sent 1,390,819 bytes received 508 bytes 309,183.78 bytes/sec
+total size is 1,388,520 speedup is 1.00
+```
 
 
 
