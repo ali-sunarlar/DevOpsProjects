@@ -560,6 +560,353 @@ Option Description
 \S      Match non-white space. Synonym for [^[:space:]].
 ```
 
+## Match Regular Expressions in the Command Line
+
+
+Isolating Data with the grep Command
+
+```sh
+[user@host ~]$ grep '^computer' /usr/share/dict/words
+computer
+computerese
+computerise
+computerite
+computerizable
+computerization
+computerize
+computerized
+computerizes
+computerizing
+computerlike
+computernik
+computers
+```
+
+
+The grep command can process output from other commands by using a pipe operator character
+(|). The following example shows the grep command parsing lines from the output of another
+command
+
+```sh
+[root@host ~]# ps aux | grep chrony
+chrony 662 0.0 0.1 29440 2468 ? S 10:56 0:00 /usr/sbin/chronyd
+
+```
+
+
+The grep Command Options
+
+|   Option  | Function  |
+|-----------|-----------|
+| -i | Use the provided regular expression but do not enforce case sensitivity (run case-insensitive). |
+| -v | Display only lines that do not contain matches to the regular expression. |
+| -r | Search for data that matches the regular expression recursively in a group of files or directories. |
+| -A | NUMBER Display NUMBER of lines after the regular expression match. |
+| -B | NUMBER Display NUMBER of lines before the regular expression match. |
+| -e | If multiple -e options are used, then multiple regular expressions can be supplied and are used with a logical OR. |
+
+
+Examples of the grep Command
+
+Regular expressions are case-sensitive by default. Use the grep command -i option to run a
+case-insensitive search. The following example shows an excerpt of the /etc/httpd/conf/
+httpd.conf configuration file
+
+```sh
+[user@host ~]$ cat /etc/httpd/conf/httpd.conf
+...output omitted...
+ServerRoot "/etc/httpd"
+#
+# Listen: Allows you to bind Apache to specific IP addresses and/or
+# ports, instead of the default. See also the <VirtualHost>
+# directive.
+#
+# Change this to Listen on a specific IP address, but note that if
+# httpd.service is enabled to run at boot time, the address may not be
+# available when the service starts. See the httpd.service(8) man
+# page for more information.
+#
+#Listen 12.34.56.78:80
+Listen 80
+...output omitted...
+
+```
+
+
+The following example searches for the serverroot regular expression in the /etc/httpd/
+conf/httpd.conf configuration file
+
+```sh
+[user@host ~]$ grep -i serverroot /etc/httpd/conf/httpd.conf
+# with "/", the value of ServerRoot is prepended -- so 'log/access_log'
+# with ServerRoot set to '/www' will be interpreted by the
+# ServerRoot: The top of the directory tree under which the server's
+# ServerRoot at a non-local disk, be sure to specify a local disk on the
+# same ServerRoot for multiple httpd daemons, you will need to change at
+ServerRoot "/etc/httpd"
+
+```
+
+In the following example, all lines, regardless of case, that do not contain the server regular
+expression are returned
+
+```sh
+[user@host ~]$ grep -v -i server /etc/hosts
+127.0.0.1 localhost.localdomain localhost
+172.25.254.254 classroom.example.com classroom
+172.25.254.254 content.example.com content
+172.25.254.254 materials.example.com materials
+### rht-vm-hosts file listing the entries to be appended to /etc/hosts
+172.25.250.9 workstation.lab.example.com workstation
+172.25.250.254 bastion.lab.example.com bastion
+172.25.250.220 utility.lab.example.com utility
+172.25.250.220 registry.lab.example.com registry
+```
+
+
+To look at a file without being distracted by comment lines, use the grep command -v option. In
+the following example, the regular expression matches all lines that begin with a hash character (#)
+or the semicolon (;) character. Either of these two characters at the beginning of a line indicates a
+comment that is omitted from the output
+
+```sh
+[user@host ~]$ grep -v '^[#;]' /etc/ethertypes
+IPv4 0800 ip ip4 # Internet IP (IPv4)
+X25 0805
+ARP 0806 ether-arp #
+FR_ARP 0808 # Frame Relay ARP [RFC1701]
+
+```
+
+
+The grep command -e option allows you to search for more than one regular expression at a time.
+The following example, which uses a combination of the less and grep commands, locates all
+occurrences of pam_unix, user root, and Accepted publickey in the /var/log/secure
+log file
+
+
+```sh
+[root@host ~]# cat /var/log/secure | grep -e 'pam_unix' \
+-e 'user root' -e 'Accepted publickey' | less
+Mar 4 03:31:41 localhost passwd[6639]: pam_unix(passwd:chauthtok): password
+ changed for root
+Mar 4 03:32:34 localhost sshd[15556]: Accepted publickey for devops from
+ 10.30.0.167 port 56472 ssh2: RSA SHA256:M8ikhcEDm2tQ95Z0o7ZvufqEixCFCt
++wowZLNzNlBT0
+Mar 4 03:32:34 localhost systemd[15560]: pam_unix(systemd-user:session): session
+ opened for user devops(uid=1001) by (uid=0)
+
+```
+
+To search for text in a file that is you have open with the vim or less commands, first enter the
+slash character (/) and then type the pattern to find. Press Enter to start the search. Press N to
+find the next match
+
+```sh
+[root@host ~]# vim /var/log/boot.log
+...output omitted...
+[^[[0;32m OK ^[[0m] Finished ^[[0;1;39mdracut pre-pivot and cleanup hook^[[0m.^M
+ Starting ^[[0;1;39mCleaning Up and Shutting Down Daemons^[[0m...^M
+[^[[0;32m OK ^[[0m] Stopped target ^[[0;1;39mRemote Encrypted Volumes^[[0m.^M
+[^[[0;32m OK ^[[0m] Stopped target ^[[0;1;39mTimer Units^[[0m.^M
+[^[[0;32m OK ^[[0m] Closed ^[[0;1;39mD-Bus System Message Bus Socket^[[0m.^M
+/Daemons
+```
+
+```sh
+[root@host ~]# less /var/log/messages
+...output omitted...
+Mar 4 03:31:19 localhost kernel: pci 0000:00:02.0: vgaarb: setting as boot VGA
+ device
+Mar 4 03:31:19 localhost kernel: pci 0000:00:02.0: vgaarb: VGA device added:
+ decodes=io+mem,owns=io+mem,locks=none
+Mar 4 03:31:19 localhost kernel: pci 0000:00:02.0: vgaarb: bridge control
+ possible
+Mar 4 03:31:19 localhost kernel: vgaarb: loaded
+Mar 4 03:31:19 localhost kernel: SCSI subsystem initialized
+Mar 4 03:31:19 localhost kernel: ACPI: bus type USB registered
+Mar 4 03:31:19 localhost kernel: usbcore: registered new interface driver usbfs
+Mar 4 03:31:19 localhost kernel: usbcore: registered new interface driver hub
+Mar 4 03:31:19 localhost kernel: usbcore: registered new device driver usb
+/device
+
+```
+
+Use the grep command to find the GID and UID for the postfix and postdrop groups
+and users. To do so, use the rpm -q --scripts command which queries the information
+for a specific package and shows the scripts that are used as part of the installation
+process
+
+
+```sh
+[student@servera ~]$ rpm -q --scripts postfix | grep -e 'user' -e 'group'
+# Add user and groups if necessary
+/usr/sbin/groupadd -g 90 -r postdrop 2>/dev/null
+/usr/sbin/groupadd -g 89 -r postfix 2>/dev/null
+/usr/sbin/groupadd -g 12 -r mail 2>/dev/null
+/usr/sbin/useradd -d /var/spool/postfix -s /sbin/nologin -g postfix -G mail -M -r
+ -u 89 postfix 2>/dev/null
+ setgid_group=postdrop \
+```
+
+
+Modify the previous regular expression to display the first two messages in the /var/log/
+maillog file. In this search, you do not need to use the caret character (^), because you
+are not searching for the first character in a line.
+
+
+```sh
+[root@servera ~]# grep 'postfix' /var/log/maillog | head -n 2
+Apr 1 15:27:16 servera postfix/postfix-script[3121]: starting the Postfix mail
+ system
+Apr 1 15:27:16 servera postfix/master[3123]: daemon started -- version 3.5.9,
+ configuration /etc/postfix
+```
+
+
+Find the name of the queue directory for the Postfix server. Search the /etc/
+postfix/main.cf configuration file for all information about queues. Use the grep
+command -i option to ignore case distinctions
+
+
+```sh
+[root@servera ~]# grep -i 'queue' /etc/postfix/main.cf
+# testing. When soft_bounce is enabled, mail will remain queued that
+# The queue_directory specifies the location of the Postfix queue.
+queue_directory = /var/spool/postfix
+# QUEUE AND PROCESS OWNERSHIP
+# The mail_owner parameter specifies the owner of the Postfix queue
+# is the Sendmail-compatible mail queue listing command.
+# setgid_group: The group for mail submission and queue management
+```
+
+Confirm that the postfix service writes messages to the /var/log/messages file. Use
+the less command and then the slash character (/) to search the file. Press n to move to
+the next entry that matches the search. Press q to quit the less command
+
+```sh
+[root@servera ~]# less /var/log/messages
+...output omitted...
+Apr 1 15:27:15 servera systemd[1]: Starting Postfix Mail Transport Agent...
+...output omitted...
+Apr 1 15:27:16 servera systemd[1]: Started Postfix Mail Transport Agent.
+...output omitted...
+/Postfix
+```
+
+
+Use the ps aux command to confirm that the postfix server is currently running. Use
+the grep command to limit the output to the necessary lines
+
+
+```sh
+[root@servera ~]# ps aux | grep postfix
+root 3123 0.0 0.2 38172 4384 ? Ss 15:27 0:00 /usr/
+libexec/postfix/master -w
+postfix 3124 0.0 0.4 45208 8236 ? S 15:27 0:00 pickup -l -t
+ unix -u
+postfix 3125 0.0 0.4 45252 8400 ? S 15:27 0:00 qmgr -l -t unix
+ -u
+root 3228 0.0 0.1 221668 2288 pts/0 S+ 15:55 0:00 grep --
+color=auto postfix
+```
+
+Confirm that the qmgr, cleanup, and pickup queues are correctly configured. Use the
+grep command -e option to match multiple entries in the same file. The /etc/postfix/
+master.cf file is the configuration file
+
+
+```sh
+[root@servera ~]# grep -e qmgr -e pickup -e cleanup /etc/postfix/master.cf
+pickup unix n - n 60 1 pickup
+cleanup unix n - n - 0 cleanup
+qmgr unix n - n 300 1 qmgr
+#qmgr unix n - n 300 1 oqmgr
+```
+
+
+example
+
+
+|   Command or file | Content requested |
+|-------------------|-------------------|
+| hostname -f | Get all the output. |
+| echo "#####" | Get all the output. |
+| lscpu | Get only the lines that start with the string CPU. |
+| echo "#####" | Get all the output. |
+| /etc/selinux/config | Ignore empty lines. Ignore lines starting with #. |
+| echo "#####" | Get all the output. |
+| /var/log/secure | Get all "Failed password" entries. |
+| echo "#####" | Get all the output. |
+
+
+```sh
+[student@workstation ~]$ vim ~/bin/bash-lab
+```
+
+```sh
+#!/usr/bin/bash
+#
+USR='student'
+OUT='/home/student/output'
+#
+for SRV in servera serverb
+ do
+ssh ${USR}@${SRV} "hostname -f" > ${OUT}-${SRV}
+echo "#####" >> ${OUT}-${SRV}
+ssh ${USR}@${SRV} "lscpu | grep '^CPU'" >> ${OUT}-${SRV}
+echo "#####" >> ${OUT}-${SRV}
+ssh ${USR}@${SRV} "grep -v '^$' /etc/selinux/config|grep -v '^#'" >> ${OUT}-${SRV}
+echo "#####" >> ${OUT}-${SRV}
+ssh ${USR}@${SRV} "sudo grep 'Failed password' /var/log/secure" >> ${OUT}-${SRV}
+echo "#####" >> ${OUT}-${SRV}
+done
+```
+
+```sh
+[student@workstation ~]$ bash-lab
+```
+
+
+```sh
+[student@workstation ~]$ cat /home/student/output-servera
+servera.lab.example.com
+#####
+CPU op-mode(s): 32-bit, 64-bit
+CPU(s): 2
+CPU family: 6
+#####
+SELINUX=enforcing
+SELINUXTYPE=targeted
+#####
+Apr 1 05:42:07 servera sshd[1275]: Failed password for invalid user operator1
+ from 172.25.250.9 port 42460 ssh2
+Apr 1 05:42:09 servera sshd[1277]: Failed password for invalid user sysadmin1
+ from 172.25.250.9 port 42462 ssh2
+Apr 1 05:42:11 servera sshd[1279]: Failed password for invalid user manager1 from
+ 172.25.250.9 port 42464 ssh2
+#####
+[student@workstation ~]$ cat /home/student/output-serverb
+serverb.lab.example.com
+#####
+CPU op-mode(s): 32-bit, 64-bit
+CPU(s): 2
+CPU family: 6
+#####
+SELINUX=enforcing
+SELINUXTYPE=targeted
+#####
+Apr 1 05:42:14 serverb sshd[1252]: Failed password for invalid user operator1
+ from 172.25.250.9 port 53494 ssh2
+Apr 1 05:42:17 serverb sshd[1257]: Failed password for invalid user sysadmin1
+ from 172.25.250.9 port 53496 ssh2
+Apr 1 05:42:19 serverb sshd[1259]: Failed password for invalid user manager1 from
+ 172.25.250.9 port 53498 ssh2
+#####
+```
+
+
+
 
 
 
