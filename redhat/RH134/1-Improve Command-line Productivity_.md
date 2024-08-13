@@ -906,6 +906,106 @@ Apr 1 05:42:19 serverb sshd[1259]: Failed password for invalid user manager1 fro
 ```
 
 
+## Kullanıcı var mı Yok mu Bakan yoksa oluşturan script
+
+
+-eq=esittir
+
+-ne=esit degildir
+
+-lt=kucukluk kontrolu
+
+-le=kucukluk veya esitlik
+
+-gt=buyukluk
+
+-ge=buyukluk veya esitlik
+
+
+
+
+```sh
+#!/bin/bash
+echo -n "eklemek istenen kullanici"
+read yeni_kullanici
+check_user yeni_kullanici
+    if [$? -eq 0]; then
+            echo "kullanici zaten mevcut"
+        else
+            add_user $yeni_kullanici
+        fi
+check_user(){
+    username=$yeni_kullanici
+    grep -p "^$yeni_kullanici:" /etc/passwd
+    retun $?
+}
+
+add_user(){
+    username=$yeni_kullanici
+    useradd $username
+    if [$? -eq 0]; then
+        echo "kullanici $username basarili bir sekilde eklendi"
+    else
+        echo "Kullanici zaten var"
+}
+```
+
+
+
+## Paket yoksa yükleme yapan script
+
+
+```sh
+#!/bin/bash
+
+#kontrol edilecek paket adi
+
+package_name="paket-adi"
+
+#paketin yuklu olup olmadigini kontrol et
+
+rpm -q $package_name > /dev/null
+
+#cikis kodunu kontrol et
+
+if [$? -eq 0]; then
+    echo "Paket zaten yuklu"
+else
+    #paketi yukle
+    echo "Paket yukleniyor..."
+    yum install $package_name -y
+    if [$? -eq 0]; then
+        echo "Paket basariyla yuklendi"
+    else
+        echo "Paket yuklenirken bir hata olustu"
+    fi
+fi
+``` 
+
+
+
+## Kullaniciya sudo yetkisi verme veya alma
+
+```sh
+#!/bin/bash
+username="kullanici"
+if grep -q "^$username" /etc/sudoers; then
+    echo "kullanicinin zaten sudo yetkisine sahip"
+else
+    echo "$username ALL=(ALL:ALL) ALL" >> /etc/sudoers
+if [$? -eq 0]; then
+        echo "kullaniciya sudo yetkisi basariyla verildi"
+    else
+        echo "Kullaniciya sudo yetkisi verilirken bir hata olustu"
+    fi
+fi
+```
+
+
+
+
+
+
 
 
 
@@ -920,9 +1020,6 @@ Apr 1 05:42:19 serverb sshd[1259]: Failed password for invalid user manager1 fro
 işlemin doğru mu yanlış olduğunu kontrol için çıkış kodları kullanılır
 
 ```sh
-
-
-
 #!/bin/bash
 directory="/root/test"
 
@@ -945,7 +1042,6 @@ else
 
 
 ```sh
-
 if [[ $? -ne 0 ]]; then
 ```
 
