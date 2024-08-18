@@ -33,6 +33,93 @@ dynamic_tuning = 0 ise kapalı demektir. Bu statik bir tuning aktif olduğu anla
 
 Dynamic tuning default'da disable durumdadır. /etc/tuned/tuned-main.conf dosyasindaki dynamic_tuning değeri 1 yapılır.
 
+tune kurulumu
+
+```sh
+[root@rocky2 ~]# dnf install tuned
+Last metadata expiration check: 1:44:01 ago on Sat 17 Aug 2024 10:58:27 PM +03.
+Dependencies resolved.
+=============================================================================================================================================================================
+ Package                                         Architecture                      Version                                           Repository                         Size 
+=============================================================================================================================================================================
+Installing:
+ tuned                                           noarch                            2.22.1-1.el9                                      baseos                            323 k 
+Installing dependencies:
+ dmidecode                                       x86_64                            1:3.5-3.el9                                       baseos                             95 k 
+ hdparm                                          x86_64                            9.62-2.el9                                        baseos                             95 k 
+ libtraceevent                                   x86_64                            1.5.3-3.el9                                       baseos                            213 k 
+ polkit                                          x86_64                            0.117-11.el9                                      baseos                            145 k 
+ polkit-libs                                     x86_64                            0.117-11.el9                                      baseos                            8.3 M 
+ polkit-pkla-compat                              x86_64                            0.1-21.el9                                        baseos                             44 k 
+ python3-linux-procfs                            noarch                            0.7.3-1.el9                                       baseos                             30 k 
+ python3-perf                                    x86_64                            5.14.0-427.31.1.el9_4                             baseos                            5.1 M 
+ python3-pyudev                                  noarch                            0.22.0-6.el9                                      baseos                             76 k 
+ virt-what                                       x86_64                            1.25-5.el9                                        baseos                             33 k 
+
+Transaction Summary
+=============================================================================================================================================================================
+Install  11 Packages
+
+Total download size: 14 M
+Installed size: 32 M
+Is this ok [y/N]: Y
+Downloading Packages:
+(1/11): python3-linux-procfs-0.7.3-1.el9.noarch.rpm                                                                                           77 kB/s |  30 kB     00:00    
+(2/11): polkit-pkla-compat-0.1-21.el9.x86_64.rpm                                                                                              89 kB/s |  44 kB     00:00     
+(3/11): dmidecode-3.5-3.el9.x86_64.rpm                                                                                                       191 kB/s |  95 kB     00:00    
+(4/11): python3-pyudev-0.22.0-6.el9.noarch.rpm                                                                                               656 kB/s |  76 kB     00:00     
+(5/11): virt-what-1.25-5.el9.x86_64.rpm                                                                                                      391 kB/s |  33 kB     00:00     
+(6/11): hdparm-9.62-2.el9.x86_64.rpm                                                                                                         908 kB/s |  95 kB     00:00     
+(7/11): libtraceevent-1.5.3-3.el9.x86_64.rpm                                                                                                 426 kB/s | 213 kB     00:00     
+(8/11): tuned-2.22.1-1.el9.noarch.rpm                                                                                                        423 kB/s | 323 kB     00:00     
+(9/11): polkit-0.117-11.el9.x86_64.rpm                                                                                                       386 kB/s | 145 kB     00:00     
+(10/11): python3-perf-5.14.0-427.31.1.el9_4.x86_64.rpm                                                                                       2.5 MB/s | 5.1 MB     00:02    
+(11/11): polkit-libs-0.117-11.el9.x86_64.rpm                                                                                                 1.2 MB/s | 8.3 MB     00:06     
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Total                                                                                                                                        1.7 MB/s |  14 MB     00:08     
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                                                                                                                     1/1 
+  Installing       : polkit-libs-0.117-11.el9.x86_64                                                                                                                    1/11 
+  Installing       : dmidecode-1:3.5-3.el9.x86_64                                                                                                                       2/11 
+  Installing       : virt-what-1.25-5.el9.x86_64                                                                                                                        3/11 
+  Running scriptlet: polkit-0.117-11.el9.x86_64                                                                                                                         4/11 
+  Installing       : polkit-0.117-11.el9.x86_64                                                                                                                         4/11 
+  Running scriptlet: polkit-0.117-11.el9.x86_64                                                                                                                         4/11 
+  Installing       : polkit-pkla-compat-0.1-21.el9.x86_64                                                                                                               5/11 
+  Installing       : libtraceevent-1.5.3-3.el9.x86_64                                                                                                                   6/11 
+  Installing       : python3-perf-5.14.0-427.31.1.el9_4.x86_64                                                                                                          7/11 
+  Installing       : hdparm-9.62-2.el9.x86_64                                                                                                                           8/11 
+  Installing       : python3-pyudev-0.22.0-6.el9.noarch                                                                                                                 9/11 
+  Installing       : python3-linux-procfs-0.7.3-1.el9.noarch                                                                                                           10/11 
+  Installing       : tuned-2.22.1-1.el9.noarch                                                                                                                         11/11 
+  Running scriptlet: tuned-2.22.1-1.el9.noarch                                                                                                                         11/11 
+Created symlink /etc/systemd/system/multi-user.target.wants/tuned.service → /usr/lib/systemd/system/tuned.service.
+
+  Verifying        : python3-linux-procfs-0.7.3-1.el9.noarch                                                                                                            1/11 
+  Verifying        : dmidecode-1:3.5-3.el9.x86_64                                                                                                                       2/11 
+  Verifying        : polkit-pkla-compat-0.1-21.el9.x86_64                                                                                                               3/11 
+  Verifying        : python3-pyudev-0.22.0-6.el9.noarch                                                                                                                 4/11 
+  Verifying        : virt-what-1.25-5.el9.x86_64                                                                                                                        5/11 
+  Verifying        : hdparm-9.62-2.el9.x86_64                                                                                                                           6/11 
+  Verifying        : tuned-2.22.1-1.el9.noarch                                                                                                                          7/11 
+  Verifying        : libtraceevent-1.5.3-3.el9.x86_64                                                                                                                   8/11 
+  Verifying        : polkit-libs-0.117-11.el9.x86_64                                                                                                                    9/11 
+  Verifying        : polkit-0.117-11.el9.x86_64                                                                                                                        10/11 
+  Verifying        : python3-perf-5.14.0-427.31.1.el9_4.x86_64                                                                                                         11/11 
+
+Installed:
+  dmidecode-1:3.5-3.el9.x86_64           hdparm-9.62-2.el9.x86_64                 libtraceevent-1.5.3-3.el9.x86_64            polkit-0.117-11.el9.x86_64
+  polkit-libs-0.117-11.el9.x86_64        polkit-pkla-compat-0.1-21.el9.x86_64     python3-linux-procfs-0.7.3-1.el9.noarch     python3-perf-5.14.0-427.31.1.el9_4.x86_64      
+  python3-pyudev-0.22.0-6.el9.noarch     tuned-2.22.1-1.el9.noarch                virt-what-1.25-5.el9.x86_64
+
+Complete!
+```
+
+
 tune yapılandırma dosyasi
 ```sh
 [root@rocky2 user]# cat /etc/tuned/tuned-main.conf
@@ -61,6 +148,10 @@ update_interval = 10
 .
 .
 .
+[root@rocky2 ~]# systemctl is-active tuned
+inactive
+
+
 
 [user@rocky2 ~]$ systemctl enable --now tuned
 ==== AUTHENTICATING FOR org.freedesktop.systemd1.manage-unit-files ====
@@ -83,6 +174,9 @@ Password:
 active
 
 ```
+
+
+
 
 ## The tuned Utility
 
@@ -162,7 +256,7 @@ script.sh   tuned.conf
 summary=Optimize for low power consumption
 
 [cpu]
-#cpu çalışma hızı belirtilir
+#cpu çalışma hızı belirtilir. Çalışma modu
 governor=ondemand|powersave
 #enerji verimliliği
 energy_perf_bias=powersave|power
@@ -254,12 +348,14 @@ throughput-performance profil config dosyası. (CPU,Memory ve disk IO en yüksek
 summary=Broadly applicable tuning that provides excellent performance across a variety of common server workloads
 
 [variables]
+# CPU değişkenleri tanımlanmış
 thunderx_cpuinfo_regex=CPU part\s+:\s+(0x0?516)|(0x0?af)|(0x0?a[0-3])|(0x0?b8)\b
 amd_cpuinfo_regex=model name\s+:.*\bAMD\b
 
 [cpu]
 governor=performance
 energy_perf_bias=performance
+#min performan yüzdesi
 min_perf_pct=100
 
 # Marvell ThunderX
