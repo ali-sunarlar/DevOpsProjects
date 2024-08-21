@@ -5,8 +5,114 @@
 fiziksel device
 
 ```sh
+[root@rocky1 ~]# lsblk
+NAME        MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+sr0          11:0    1  1.6G  0 rom
+nvme0n1     259:0    0   20G  0 disk
+├─nvme0n1p1 259:1    0    1G  0 part /boot
+└─nvme0n1p2 259:2    0   19G  0 part
+  ├─rl-root 253:0    0   17G  0 lvm  /
+  └─rl-swap 253:1    0    2G  0 lvm  [SWAP]
+nvme0n2     259:3    0    5G  0 disk
+nvme0n3     259:4    0    5G  0 disk
+nvme0n4     259:5    0    5G  0 disk
+nvme0n5     259:6    0    5G  0 disk
+```
+
+oluşturabilmek için öncellikle partition atamlarını yapıyoruz.
+
+```sh
+[root@rocky1 ~]# parted /dev/nvme0n2 mklabel gpt
+Information: You may need to update /etc/fstab.
+[root@rocky1 ~]# parted /dev/nvme0n3 mklabel gpt
+Information: You may need to update /etc/fstab.
+[root@rocky1 ~]# parted /dev/nvme0n4 mklabel gpt
+Information: You may need to update /etc/fstab.
+[root@rocky1 ~]# parted /dev/nvme0n5 mklabel gpt
+Information: You may need to update /etc/fstab.
+#tekrar atanırsa
+[root@rocky1 ~]# parted /dev/nvme0n5 mklabel gpt
+Warning: The existing disk label on /dev/nvme0n5 will be destroyed and all data on this disk will be lost. Do you want to continue?
+Yes/No? Yes
+Information: You may need to update /etc/fstab.
+```
+
+```sh
+
+[root@rocky1 ~]# parted /dev/nvme0n2
+GNU Parted 3.5
+Using /dev/nvme0n2
+Welcome to GNU Parted! Type 'help' to view a list of commands.
+(parted) mkpart
+Partition name?  []? primary
+File system type?  [ext2]? xfs
+Start? 0%
+End? 100%
+(parted) quit
+Information: You may need to update /etc/fstab.
+
+[root@rocky1 ~]# parted /dev/nvme0n3
+GNU Parted 3.5
+Using /dev/nvme0n3
+Welcome to GNU Parted! Type 'help' to view a list of commands.
+(parted) mkpart
+Partition name?  []? primary
+File system type?  [ext2]? xfs
+Start? 0%
+End? 100%
+(parted) quit
+Information: You may need to update /etc/fstab.
+
+[root@rocky1 ~]# parted /dev/nvme0n4
+GNU Parted 3.5
+Using /dev/nvme0n4
+Welcome to GNU Parted! Type 'help' to view a list of commands.
+(parted) mkpart
+Partition name?  []? primary
+File system type?  [ext2]? xfs
+Start? 0%
+End? 100%
+(parted) q
+Information: You may need to update /etc/fstab.
+
+
+[root@rocky1 ~]# parted /dev/nvme0n5
+GNU Parted 3.5
+Using /dev/nvme0n5
+Welcome to GNU Parted! Type 'help' to view a list of commands.
+(parted) mkpart
+Partition name?  []? primary
+File system type?  [ext2]? xfs
+Start? 0%
+End? 100%
+(parted) q
+Information: You may need to update /etc/fstab.
 
 ```
+
+son lsblk çıktısı
+
+```sh
+[root@rocky1 ~]# lsblk
+NAME        MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+sr0          11:0    1  1.6G  0 rom
+nvme0n1     259:0    0   20G  0 disk
+├─nvme0n1p1 259:1    0    1G  0 part /boot
+└─nvme0n1p2 259:2    0   19G  0 part
+  ├─rl-root 253:0    0   17G  0 lvm  /
+  └─rl-swap 253:1    0    2G  0 lvm  [SWAP]
+nvme0n2     259:3    0    5G  0 disk
+└─nvme0n2p1 259:7    0    5G  0 part
+nvme0n3     259:4    0    5G  0 disk
+└─nvme0n3p1 259:8    0    5G  0 part
+nvme0n4     259:5    0    5G  0 disk
+└─nvme0n4p1 259:9    0    5G  0 part
+nvme0n5     259:6    0    5G  0 disk
+└─nvme0n5p1 259:10   0    5G  0 part
+```
+
+
+
 
 Logical Volume Manager Workflow
 
