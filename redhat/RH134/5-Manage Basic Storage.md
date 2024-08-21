@@ -27,6 +27,7 @@ gnome-disk(is the default GNOME graphical tool, replacing gparted upstream. )
 
 
 ```sh
+#ortamdaki diskler goruntulenir
 [root@rocky2 ~]# lsblk
 NAME               MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
 sr0                 11:0    1 1024M  0 rom
@@ -453,6 +454,7 @@ nvme0n1
 
 sdb1 partition /u01 alanına mount edilmiş durumda /u01 alanını genişletme ihtiyacı olduğunda, neler yapmalıyız, onu anlatmaya çalışacağım, öncelikle sanallaştırma ortamı kullanıyorsak sdb diskini extend etmemiz gerekecek. Burada biz extend işlemini yaptık ve aşağıdaki gibi disk alanımız büyüttük şimdi partition extend etmeye geldi.
 
+```sh
 ~]# lsblk
 NAME               MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
 sda                  8:0    0  64G  0 disk
@@ -519,7 +521,10 @@ sdb                  8:16   0  15G  0 disk
 └─sdb1               8:17   0  15G  0 part /u01
 sr0                 11:0    1  10G  0 rom
 Partition extend oldu, peki maount ettiğimiz /u01 ne durumda
+``` 
 
+
+```sh
 # df -h
 Filesystem                  Size  Used Avail Use% Mounted on
 devtmpfs                    815M     0  815M   0% /dev
@@ -556,10 +561,10 @@ tmpfs                       834M     0  834M   0% /sys/fs/cgroup
 tmpfs                       167M     0  167M   0% /run/user/0
 /dev/sdb1                    15G   41M   14G   1% /u01
 Extend ve resize işlemi tamamlandı.
-
+```
 
 ## Manage Swap Space
-```ssh
+```sh
 [root@host ~]# parted /dev/vdb
 GNU Parted 3.4
 Using /dev/vdb
@@ -592,6 +597,7 @@ Information: You may need to update /etc/fstab.
 [root@host ~]# mkswap /dev/vdb2
 [root@host ~]# swapon /dev/vdb2
 [root@host ~]# free
+```
 
 ### Swap Space Calculation
 
@@ -601,7 +607,26 @@ Information: You may need to update /etc/fstab.
 | Between 8 GB and 64 GB | At least 4 GB | 1.5 times the RAM |
 | More than 64 GB | At least 4 | GB Hibernation is not recommended |
 
-### Create Swap Space
+
+
+Set Swap Space Priority
+
+
+To set the priority, use the pri option in the /etc/fstab file. The kernel uses the swap space
+with the highest priority first. The default priority is -2
+
+The following example shows three defined swap spaces in the /etc/fstab file. The kernel uses
+the last entry first, because its priority is set to 10. When that space is full, it uses the second entry,
+because its priority is set to 4. Finally, it uses the first entry, which has a default priority of -2
+
+```sh
+UUID=af30cbb0-3866-466a-825a-58889a49ef33 swap swap defaults 0 0
+UUID=39e2667a-9458-42fe-9665-c5c854605881 swap swap pri=4 0 0
+UUID=fbd7fa60-b781-44a8-961b-37ac3ef572bf swap swap pri=10 0 0
+```
+
+Use the swapon --show command to display the swap space priorities.
+When swap spaces have the same priority, the kernel writes to them in a round-robin fashion.
 
 
 Lab 143 --> 146
