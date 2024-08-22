@@ -749,7 +749,13 @@ Use the swapon command to activate the swap space on the LV
 
 Reduce Volume Group Storage
 
+LVM kullanılıyor yapılandırma yapılmış durumda fiziksel 
 
+-diskin kaldırılması veya lvm yapısının yeniden boyutlandırılması isteniyor
+
+-diskin çıkartılarak veri kurtarma için yapılabilir
+
+Bu işlem için birden fazla disk lazımdır. Birden fazla diskin kullanılması da önerilir.
 
 Reducing a VG involves removing unused PV from the VG. The pvmove command moves data
 from extents on one PV to extents on another PV with enough free extents in the same VG. You
@@ -757,6 +763,8 @@ may continue to use the LV from the same VG while reducing. Use the pvmove comma
 option to automatically backup the metadata of the VG after a change. This option uses the
 vgcfgbackup command to backup metadata automatically.
 
+
+çalışan bir disk taşınmaz başka bir diske taşınması gerekir.
 
 ```sh
 [root@host ~]# pvmove /dev/vdb3
@@ -772,6 +780,7 @@ Use the vgreduce command to remove a PV from a VG.
 
 The GFS2 and XFS file systems do not support shrinking, so you cannot reduce the
 size of an LV.
+
 
 
 ## Remove LVM Storage
@@ -807,6 +816,8 @@ Do you really want to remove active logical volume vg01/lv01? [y/n]: y
 ```
 
 Remove the Volume Group
+
+
 
 Use the vgremove VG-NAME command to remove a volume group that is no longer needed.
 
@@ -853,6 +864,8 @@ LAB 177 --> 182
 # Manage Layered Storage
 
 
+
+
 ## Storage Stack
 
 Storage in RHEL is comprised of multiple layers of drivers, managers, and utilities that are mature,
@@ -862,4 +875,207 @@ the ability to provide needed storage features for specific application use case
 
 
 ![alt text](StorageStack.png)
+
+
+Block Device
+
+
+
+
+
+Multipath
+
+
+
+
+
+
+
+
+
+
+
+mantık olarak fiziksel katman, volume katmanı, volume group katmanı
+
+
+![alt text](image-4.png)
+
+
+Volume Container katmanı
+
+![alt text](image-5.png)
+
+
+```sh
+[root@rocky2 ~]# lsblk
+NAME        MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+sr0          11:0    1 1024M  0 rom
+nvme0n1     259:0    0   20G  0 disk
+├─nvme0n1p1 259:1    0    1G  0 part /boot
+└─nvme0n1p2 259:2    0   19G  0 part
+  ├─rl-root 253:0    0   17G  0 lvm  /
+  └─rl-swap 253:1    0    2G  0 lvm  [SWAP]
+nvme0n2     259:3    0    5G  0 disk
+nvme0n3     259:4    0    5G  0 disk
+nvme0n4     259:5    0    5G  0 disk
+nvme0n5     259:6    0    5G  0 disk
+
+[root@rocky2 ~]# parted /dev/nvme0n2 mklabel gpt mkpart primary 0% 100%
+Information: You may need to update /etc/fstab.
+
+[root@rocky2 ~]# parted /dev/nvme0n3 mklabel gpt mkpart primary 0% 100%
+Information: You may need to update /etc/fstab.
+
+[root@rocky2 ~]# parted /dev/nvme0n4 mklabel gpt mkpart primary 0% 100%
+Information: You may need to update /etc/fstab.
+
+[root@rocky2 ~]# lsblk
+NAME        MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+sr0          11:0    1 1024M  0 rom
+nvme0n1     259:0    0   20G  0 disk
+├─nvme0n1p1 259:1    0    1G  0 part /boot
+└─nvme0n1p2 259:2    0   19G  0 part
+  ├─rl-root 253:0    0   17G  0 lvm  /
+  └─rl-swap 253:1    0    2G  0 lvm  [SWAP]
+nvme0n2     259:3    0    5G  0 disk
+└─nvme0n2p1 259:7    0    5G  0 part
+nvme0n3     259:4    0    5G  0 disk
+└─nvme0n3p1 259:8    0    5G  0 part
+nvme0n4     259:5    0    5G  0 disk
+└─nvme0n4p1 259:9    0    5G  0 part
+nvme0n5     259:6    0    5G  0 disk
+
+
+[root@rocky2 ~]# pvcreate /dev/nvme0n2p1
+  Physical volume "/dev/nvme0n2p1" successfully created.
+[root@rocky2 ~]# pvcreate /dev/nvme0n3p1
+  Physical volume "/dev/nvme0n3p1" successfully created.
+[root@rocky2 ~]# pvcreate /dev/nvme0n4p1
+  Physical volume "/dev/nvme0n4p1" successfully created.
+
+[root@rocky2 ~]# vgcreate vg01 /dev/nvme0n2p1 /dev/nvme0n3p1 /dev/nvme0n4p1 
+  Volume group "vg01" successfully created
+[root@rocky2 ~]# vgdisplay
+  --- Volume group ---
+  VG Name               vg01
+  System ID
+  Format                lvm2
+  Metadata Areas        3
+  Metadata Sequence No  1
+  VG Access             read/write
+  VG Status             resizable
+  MAX LV                0
+  Cur LV                0
+  Open LV               0
+  Max PV                0
+  Cur PV                3
+  Act PV                3
+  VG Size               <14.99 GiB
+  PE Size               4.00 MiB
+  Total PE              3837
+  Alloc PE / Size       0 / 0
+  Free  PE / Size       3837 / <14.99 GiB
+  VG UUID               dlSoe9-fikk-oBEW-3Ybc-61rp-TmBM-dmAc3P
+
+  --- Volume group ---
+  VG Name               rl
+  System ID
+  Format                lvm2
+  Metadata Areas        1
+  Metadata Sequence No  3
+  VG Access             read/write
+  VG Status             resizable
+  MAX LV                0
+  Cur LV                2
+  Open LV               2
+  Max PV                0
+  Cur PV                1
+  Act PV                1
+  VG Size               <19.00 GiB
+  PE Size               4.00 MiB
+  Total PE              4863
+  Alloc PE / Size       4863 / <19.00 GiB
+  Free  PE / Size       0 / 0
+  VG UUID               LMp8iC-lwW5-kW7Y-8FJd-Mne7-IUGp-bMWNPE
+
+
+[root@rocky2 ~]# lvcreate -n lv01 -l +100%FREE vg01
+  Logical volume "lv01" created.
+[root@rocky2 ~]# lvdisplay
+  --- Logical volume ---
+  LV Path                /dev/vg01/lv01
+  LV Name                lv01
+  VG Name                vg01
+  LV UUID                ZX0f3L-y7ep-ZPZp-Uqze-yYpA-RjoQ-5gQfr5
+  LV Write Access        read/write
+  LV Creation host, time rocky2, 2024-08-22 20:56:46 +0300
+  LV Status              available
+  # open                 0
+  LV Size                <14.99 GiB
+  Current LE             3837
+  Segments               3
+  Allocation             inherit
+  Read ahead sectors     auto
+  - currently set to     8192
+  Block device           253:2
+
+  --- Logical volume ---
+  LV Path                /dev/rl/root
+  LV Name                root
+  VG Name                rl
+  LV UUID                y2T2eB-4nD2-Ar0o-Pdcd-0PHq-vjkN-NgnJBb
+  LV Write Access        read/write
+  LV Creation host, time rocky1, 2024-05-29 17:12:37 +0300
+  LV Status              available
+  # open                 1
+  LV Size                <17.00 GiB
+  Current LE             4351
+  Segments               1
+  Allocation             inherit
+  Read ahead sectors     auto
+  - currently set to     8192
+  Block device           253:0
+
+  --- Logical volume ---
+  LV Path                /dev/rl/swap
+  LV Name                swap
+  VG Name                rl
+  LV UUID                NfDmZH-2d3W-WdwP-2pR6-xxmN-9TgU-MbJaRP
+  LV Write Access        read/write
+  LV Creation host, time rocky1, 2024-05-29 17:12:37 +0300
+  LV Status              available
+  # open                 2
+  LV Size                2.00 GiB
+  Current LE             512
+  Segments               1
+  Allocation             inherit
+  Read ahead sectors     auto
+  - currently set to     8192
+  Block device           253:1
+
+
+[root@rocky2 ~]# lsblk
+NAME          MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+sr0            11:0    1 1024M  0 rom
+nvme0n1       259:0    0   20G  0 disk
+├─nvme0n1p1   259:1    0    1G  0 part /boot
+└─nvme0n1p2   259:2    0   19G  0 part
+  ├─rl-root   253:0    0   17G  0 lvm  /
+  └─rl-swap   253:1    0    2G  0 lvm  [SWAP]
+nvme0n2       259:3    0    5G  0 disk
+└─nvme0n2p1   259:7    0    5G  0 part
+  └─vg01-lv01 253:2    0   15G  0 lvm
+nvme0n3       259:4    0    5G  0 disk
+└─nvme0n3p1   259:8    0    5G  0 part
+  └─vg01-lv01 253:2    0   15G  0 lvm
+nvme0n4       259:5    0    5G  0 disk
+└─nvme0n4p1   259:9    0    5G  0 part
+  └─vg01-lv01 253:2    0   15G  0 lvm
+nvme0n5       259:6    0    5G  0 disk
+```
+
+
+
+
+
 
