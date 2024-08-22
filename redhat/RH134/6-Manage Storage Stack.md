@@ -1072,6 +1072,15 @@ nvme0n4       259:5    0    5G  0 disk
 └─nvme0n4p1   259:9    0    5G  0 part
   └─vg01-lv01 253:2    0   15G  0 lvm
 nvme0n5       259:6    0    5G  0 disk
+
+
+[root@rocky2 ~]# cd /dev/vg01/
+[root@rocky2 vg01]# ls
+lv01
+
+
+
+
 ```
 
 
