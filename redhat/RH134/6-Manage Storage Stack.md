@@ -879,19 +879,257 @@ the ability to provide needed storage features for specific application use case
 
 Block Device
 
+Block devices are at the bottom of the storage stack and present a stable, consistent device
+protocol that allows virtually any block device to be transparently included in a RHEL storage
+configuration. Most block devices today are accessed through the RHEL SCSI device driver,
+and appear as a SCSI device, including legacy ATA hard drives, solid-state devices, and common
+enterprise host bus adapters (HBAs). RHEL also supports iSCSI, Fibre Channel over Ethernet
+(FCoE), virtual machine driver (virtio), serial-attached storage (SAS), Non-Volatile Memory
+Express (NVMe) and others.
 
+An iSCSI target can be a dedicated physical device in a network or an iSCSI software-configured
+logical device on a networked storage server. The target is the portal endpoint in a SCSI protocol
+bus communication, to access the storage as Logical Unit Numbers (LUNs).
+
+
+Fibre Channel over Ethernet (FCoE) protocol transmits Fibre Channel frames over Ethernet
+networks. Typically, data centers have dedicated LAN and Storage Area Network (SAN) cabling,
+each uniquely configured for their traffic. With FCoE, both traffic types can be combined into
+a larger, converged, Ethernet network architecture. FCoE benefits include lower hardware and
+energy costs.
 
 
 
 Multipath
 
+A path is a connection between a server and the underlying storage. Device Mapper multipath
+(dm-multipath) is a RHEL native multipath tool for configuring redundant I/O paths into a
+single, path-aggregated logical device. A logical device created by using the device mapper (dm)
+appears as a unique block device under /dev/mapper/ for each LUN attached to the system.
+
+Storage multipath redundancy can also be implemented by using network bonding when the
+storage, such as iSCSI and FCoE, uses network cabling.
+
+Partitions
+
+A block device can be further divided into partitions. Partitions may consume the entire block
+device size or divide the block device for creating multiple partitions. These partitions can be used
+to create a file system, LVM devices, or can be used directly for database structures or other raw
+storage.
+
+RAID
+
+A Redundant Array of Inexpensive Disks (RAID) is a storage virtualization technology that creates
+large logical volumes from multiple physical or virtual block device components. Different forms
+of RAID volumes offer data redundancy, performance improvement, or both, by implementing
+mirroring or striping layouts.
+
+LVM supports RAID levels 0, 1, 4, 5, 6, and 10. RAID logical volumes created and managed by LVM
+leverage the Multiple Devices (mdadm) kernel drivers. When not using LVM, Device Mapper RAID
+(dm-raid) provides a device mapper interface to the mdadm kernel drivers.
+
+Logical Volume Manager
+
+LVM physical volumes, volume groups and logical volumes were discussed in a previous section.
+LVM can take almost any form of physical or virtual block devices, and build storage as new logical
+storage volumes, effectively hiding the physical storage configuration from applications and other
+storage clients.
 
 
+You can stack LVM volumes and implement advanced features such as encryption and
+compression for each part of the stack. There are mandated rules and recommended practices to
+follow for practical layering for specific scenarios, but this introduction focuses only on introducing
+the components. Use-case-specific recommendations are found in the Configuring and Managing
+Logical Volumes user guide.
+
+LVM supports LUKS encryption where a lower block device or partition is encrypted and presented
+as a secure volume to create a file system on top. The practical advantage for LUKS over file
+system-based or file-based encryption is that a LUKS-encrypted device does not allow public
+visibility or access to the file-system structure, such that a physical device remains secure even
+when removed from a computer
+
+LVM now incorporates VDO deduplication and compression as a configurable feature of regular
+logical volumes. LUKS encryption and VDO can be used together with logical volumes, with the
+LVM LUKS encryption enabled underneath the LVM VDO volume.
+
+File System or Other Use
+
+The top layer of the stack is typically a file system, but can be used as raw space for databases
+or custom application data requirements. RHEL supports multiple file-system types, but
+recommends XFS for most modern use cases. XFS is required when the utility implementing LVM
+is Red Hat Ceph Storage or the Stratis storage tool.
+
+Database server applications consume storage in different ways, depending on their architecture
+and size. Some smaller database store their structures in regular files that are contained in a file
+system Because of the additional overhead or restrictions of file system access, this architecture
+has scaling limits. Larger databases that want to bypass file system caching, and use their own
+caching mechanisms, prefer to create their database structures on raw storage. Logical volumes
+are suitable for use for database and other raw storage use cases.
+
+Red Hat Ceph Storage also prefers to create its own storage management metadata structures
+on raw devices to be used to create Ceph Object Storage Devices (OSDs). In the latest Red Hat
+Ceph Storage versions, Ceph uses LVM to initialize disk devices for use as OSDs. More information
+is available in the Cloud Storage with Red Hat Ceph Storage (CL260) course.
 
 
+## Stratis Storage Management
 
 
+Stratis is a local storage management tool developed by Red Hat and the upstream Fedora
+community. Stratis makes it easier to perform an initial storage configuration, change a storage
+configuration, and use advanced storage features.
 
+Stratis runs as a service that manages pools of physical storage devices and transparently creates
+and manages volumes for the newly created file systems.
+
+Stratis builds file systems from shared pools of disk devices by using a concept known as thin
+provisioning. Instead of immediately allocating physical storage space to the file system when you
+create it, Stratis dynamically allocates that space from the pool as the file system stores more
+data. Therefore, the file system might appear to be 1 TiB in size, but might only have 100 GiB of
+real storage actually allocated to it from the pool.
+
+You can create multiple pools from different storage devices. From each pool, you can create one
+or more file systems. Currently, you can create up to 224 file systems per pool.
+Stratis builds the components that make up a Stratis-managed file system from standard Linux
+components. Internally, Stratis uses the Device Mapper infrastructure that LVM also uses. Stratis
+formats the managed file systems with XFS.
+
+Figure 6.3 illustrates how Stratis assembles the elements of its storage management solution.
+Stratis assigns block storage devices such as hard disks or SSDs to pools, each contributing some
+physical storage to the pool. Then, it creates file systems from the pools, and maps physical
+storage to each file system as needed.
+
+
+![alt text](image-6.png)
+
+
+## Stratis Administration Methods
+
+
+To manage file systems with the Stratis storage management solution, install the stratiscli and stratisd packages. The stratis-cli package provides the stratis command,
+which sends reconfiguration requests to the stratisd system daemon. The stratisd package
+provides the stratisd service, which handles reconfiguration requests and manages and
+monitors Stratis's block devices, pools, and file systems.
+
+
+Install and Enable Stratis
+
+To use Stratis, ensure that your system has the required software and that the stratisd
+service is running. Install the stratis-cli and stratisd packages, and start and enable the
+stratisd service.
+
+```sh
+[root@host ~]# dnf install stratis-cli stratisd
+...output omitted...
+Is this ok [y/N]: y
+...output omitted...
+Complete!
+[root@host ~]# systemctl enable --now stratisd
+```
+
+Create Stratis Pools
+
+Create pools of one or more block devices by using the stratis pool create command. Then,
+Use the stratis pool list command to view the list of available pools.
+
+
+```sh
+[root@host ~]# stratis pool create pool1 /dev/vdb
+[root@host ~]# stratis pool list
+Name Total Physical Properties UUID
+pool1 5 GiB / 37.63 MiB / 4.96 GiB ~Ca,~Cr 11f6f3c5-5...
+```
+
+
+Warning
+
+The stratis pool list command displays the actual storage space that is in
+use and the pool space that is still available. Currently, if a pool becomes full, then
+further data written to the pool's file systems is quietly discarded.
+
+
+Use the stratis pool add-data command to add additional block devices to a pool. Then,
+use the stratis blockdev list command to verify the block devices of a pool.
+
+```sh
+[root@host ~]# stratis pool add-data pool1 /dev/vdc
+[root@host ~]# stratis blockdev list pool1
+Pool Name Device Node Physical Size Tier
+pool1 /dev/vdb 5 GiB Data
+pool1 /dev/vdc 5 GiB Data
+```
+
+Manage Stratis File Systems
+
+Use the stratis filesystem create command to create a file system from a pool. The
+links to the Stratis file systems are in the /dev/stratis/pool1 directory. Use the stratis
+filesystem list command to view the list of available file systems.
+
+
+```sh
+[root@host ~]# stratis filesystem create pool1 fs1
+[root@host ~]# stratis filesystem list
+Pool Name Name Used Created Device UUID
+pool1 fs1 546 MiB Apr 08 2022 04:05 /dev/stratis/pool1/fs1 
+ c7b5719...
+
+```
+
+Create a Stratis file system snapshot by using the stratis filesystem snapshot command.
+Snapshots are independent of the source file systems. Stratis dynamically allocates the snapshot
+storage space and uses an initial 560 MB to store the file system's journal.
+
+```sh
+[root@host ~]# stratis filesystem snapshot pool1 fs1 snapshot1
+
+```
+
+
+Persistently Mount Stratis File Systems
+
+You can persistently mount Stratis file systems by editing the /etc/fstab file and specifying
+the details of the file system. Use the lsblk command to display the UUID of the file system that
+you should use in the /etc/fstab file to identify the file system. You can also use the stratis
+filesystem list command to obtain the UUID of the file system.
+
+```sh
+[root@host ~]# lsblk --output=UUID /dev/stratis/pool1/fs1
+UUID
+c7b57190-8fba-463e-8ec8-29c80703d45e
+
+```
+
+
+The following is an example entry in the /etc/fstab file to mount a Stratis file
+system persistently. This example entry is a single long line in the file. The xsystemd.requires=stratisd.service mount option delays mounting the file system until
+the systemd daemon starts the stratisd service during the boot process.
+
+
+```sh
+UUID=c7b57190-8fba-463e-8ec8-29c80703d45e /dir1 xfs defaults,xsystemd.requires=stratisd.service 0 0
+```
+
+Important
+
+If you do not include the x-systemd.requires=stratisd.service mount
+option in the /etc/fstab file for each Stratis file system, then the machine fails to
+start properly and aborts to emergency.target the next time you reboot it.
+
+Warning
+
+Do not use the df command to query Stratis file system space.
+
+The df command reports that any mounted Stratis-managed XFS file system is
+1 TiB in size, regardless of the current allocation. Because the file system is thinly
+provisioned, a pool might not have enough physical storage to back the entire file
+system. Other file systems in the pool could use up all the available storage.
+
+Therefore, it is possible to consume the whole storage pool, even as the df
+command reports that the file system has available space. Writes to a file system
+with no available pool storage can fail.
+
+Instead, always use the stratis pool list command to accurate monitor a
+pool's available storage.
 
 
 
