@@ -430,7 +430,7 @@ maps.
 
  https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nfs-mount-on-ubuntu-20-04
 
- 
+```sh
 [root@host ~]# dnf install nfs-utils
 [root@host ~]# showmount --exports serverip
 
@@ -441,3 +441,12 @@ maps.
 [root@host ~]# vi /etc/fstab
 server:/export /mountpoint nfs rw,soft 0 0
 [root@host ~]# umount /mountpoint
+```
+
+
+
+
+
+
+
+
