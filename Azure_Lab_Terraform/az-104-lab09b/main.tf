@@ -1,3 +1,4 @@
+# 1. Gerekli Sağlayıcılar
 terraform {
   required_providers {
     azurerm = {
@@ -11,35 +12,40 @@ terraform {
   }
 }
 
+# 2. Azure Sağlayıcı Yapılandırması (Yetki hataları için güncellendi)
 provider "azurerm" {
   features {}
+  
+  # Sandbox ortamlarındaki "403 Forbidden" kayıt hatasını engellemek için:
+  skip_provider_registration = true
 }
 
-# 1. Mevcut Playground RG Bilgisi (Öncekiyle aynı RG)
-data "azurerm_resource_group" "lab09_rg" {
-  name = "1-f1ea02d7-playground-sandbox"
+# 3. Mevcut Playground Resource Group Bilgisi
+# Not: Bu blok yeni bir RG oluşturmaz, Azure'daki mevcut grubu okur.
+data "azurerm_resource_group" "lab_rg" {
+  name = "1-2c494191-playground-sandbox"
 }
 
-# 2. DNS İsmi İçin Benzersiz İsim Üretici
+# 4. DNS Etiketi İçin Benzersiz İsim Üretici
 resource "random_string" "dns_label" {
-  length  = 8
+  length  = 6
   special = false
   upper   = false
 }
 
-# 3. Azure Container Instance (ACI) Dağıtımı
+# 5. Azure Container Instance (ACI) Dağıtımı
 resource "azurerm_container_group" "aci" {
-  name                = "az104lab09b-c1"
-  location            = data.azurerm_resource_group.lab09_rg.location
-  resource_group_name = data.azurerm_resource_group.lab09_rg.name
+  name                = "az104-c1"
+  location            = data.azurerm_resource_group.lab_rg.location
+  resource_group_name = data.azurerm_resource_group.lab_rg.name
   ip_address_type     = "Public"
-  dns_name_label      = "az104lab09b-c1-${random_string.dns_label.result}"
+  dns_name_label      = "az104-c1-${random_string.dns_label.result}"
   os_type             = "Linux"
 
   container {
     name   = "hello-world"
     image  = "mcr.microsoft.com/azuredocs/aci-helloworld:latest"
-    cpu    = "0.5" # Kota dostu olması için 0.5 CPU
+    cpu    = "0.5" # Sandbox kotaları için düşük kaynak kullanımı
     memory = "1.5"
 
     ports {
@@ -49,12 +55,13 @@ resource "azurerm_container_group" "aci" {
   }
 
   tags = {
-    environment = "training"
-    lab         = "AZ-104-09b"
+    Environment = "Training"
+    Lab         = "AZ-104-09b"
   }
 }
 
-# 4. Çıktı Olarak FQDN (Erişim Adresi) Bilgisini Ver
+# 6. Çıktı (Output): Konteynere Erişim Adresi
 output "container_url" {
-  value = "http://${azurerm_container_group.aci.fqdn}"
+  description = "Tarayıcıdan erişebileceğiniz adres:"
+  value       = "http://${azurerm_container_group.aci.fqdn}"
 }
