@@ -1,0 +1,20 @@
+{
+  "version": 2,
+  "dgSpecHash": "aZ7AiPVoqvA=",
+  "success": false,
+  "projectFilePath": "C:\\Users\\ali.sunarlar\\Repos\\DevOpsProjects\\Azure_Apps\\WorkerService1\\WorkerService1\\WorkerService1.csproj",
+  "expectedPackageFiles": [],
+  "logs": [
+    {
+      "code": "NU1101",
+      "level": "Error",
+      "message": "Unable to find package Microsoft.Extensions.Hosting. No packages exist with this id in source(s): Microsoft Visual Studio Offline Packages",
+      "projectPath": "C:\\Users\\ali.sunarlar\\Repos\\DevOpsProjects\\Azure_Apps\\WorkerService1\\WorkerService1\\WorkerService1.csproj",
+      "filePath": "C:\\Users\\ali.sunarlar\\Repos\\DevOpsProjects\\Azure_Apps\\WorkerService1\\WorkerService1\\WorkerService1.csproj",
+      "libraryId": "Microsoft.Extensions.Hosting",
+      "targetGraphs": [
+        "net10.0"
+      ]
+    }
+  ]
+}

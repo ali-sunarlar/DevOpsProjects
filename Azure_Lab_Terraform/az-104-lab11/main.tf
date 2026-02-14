@@ -9,16 +9,16 @@ terraform {
 
 provider "azurerm" {
   features {}
-  # Sandbox ortamındaki yetki kısıtlamalarını aşmak için
+  # Sandbox yetki hatalarını (403 Forbidden) önlemek için kritik ayar:
   skip_provider_registration = true
 }
 
-# 1. Mevcut Playground RG Bilgisi
+# 1. Mevcut Playground Resource Group Bilgisi
 data "azurerm_resource_group" "lab_rg" {
-  name = "1-2c494191-playground-sandbox" 
+  name = "1-4539076f-playground-sandbox"
 }
 
-# 2. İzleme Testi İçin Sanal Ağ
+# 2. İzleme Testi İçin Sanal Makine Altyapısı (Task 1)
 resource "azurerm_virtual_network" "vnet" {
   name                = "az104-11-vnet1"
   address_space       = ["10.11.0.0/16"]
@@ -33,7 +33,6 @@ resource "azurerm_subnet" "subnet" {
   address_prefixes     = ["10.11.0.0/24"]
 }
 
-# 3. Sanal Makine (Yedekleme ve İzleme Testi İçin)
 resource "azurerm_network_interface" "nic" {
   name                = "az104-11-nic0"
   location            = data.azurerm_resource_group.lab_rg.location
@@ -68,40 +67,22 @@ resource "azurerm_windows_virtual_machine" "vm" {
   }
 }
 
-# 4. Action Group (Bildirim Grubu)
+# 3. Action Group - Bildirim Grubu (Task 3)
 resource "azurerm_monitor_action_group" "ops_team" {
-  name                = "AlertOperationsTeam"
+  name                = "Alert the operations team"
   resource_group_name = data.azurerm_resource_group.lab_rg.name
-  short_name          = "AlertOps"
+  short_name          = "AlertOpsTeam"
 
   email_receiver {
-    name                    = "AdminNotification"
-    email_address           = "test@example.com" # Burayı güncelleyebilirsin
+    name                    = "VM was deleted notification"
+    email_address           = "it-admin@example.com" # Burayı kendi mailinle güncelleyebilirsin
     use_common_alert_schema = true
   }
 }
 
-# 5. Activity Log Alert (Task 2 - Görseldeki Hatalı Bölümün Düzeltilmiş Hali)
-resource "azurerm_monitor_activity_log_alert" "vm_delete_alert" {
-  name                = "VM was deleted"
-  resource_group_name = data.azurerm_resource_group.lab_rg.name
-  # Scopes'un data blok üzerinden doğru çağrılması
-  scopes              = [data.azurerm_resource_group.lab_rg.id]
-  description         = "A VM in your resource group was deleted"
+# 4. Activity Log Alert - VM Silme Uyarısı (Task 2)
 
-  criteria {
-    # Azure standartlarına uygun işlem ismi
-    operation_name = "Microsoft.Compute/virtualMachines/delete"
-    category       = "Administrative"
-  }
-
-  action {
-    # Oluşturulan Action Group ID'sinin bağlanması
-    action_group_id = azurerm_monitor_action_group.ops_team.id
-  }
-}
-
-# 6. Log Analytics Workspace (Sorgular İçin)
+# 5. Log Analytics Workspace (Task 6 için)
 resource "azurerm_log_analytics_workspace" "law" {
   name                = "az104-11-law"
   location            = data.azurerm_resource_group.lab_rg.location
