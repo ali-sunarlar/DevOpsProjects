@@ -80,6 +80,7 @@ resource "azurerm_monitor_action_group" "ops_team" {
   }
 }
 
+
 # 4. Activity Log Alert - VM Silme Uyarısı (Task 2)
 
 # 5. Log Analytics Workspace (Task 6 için)
