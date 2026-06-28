@@ -1,0 +1,111 @@
+# 1. BÖLÜM: Verilerin GRS olarak saklanacağı Disk Politikası (Storage Class)
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: muhasebe-grs-disk
+provisioner: disk.csi.azure.com
+volumeBindingMode: WaitForFirstConsumer
+parameters:
+  skuName: Standard_GRS # İşte CEO'ya söz verdiğin Geo-Redundant yedeklilik burada tanımlanıyor!
+---
+# 2. BÖLÜM: Muhasebe Ekibi İçin 5 GB'lık Kalıcı Alan Talebi
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: muhasebe-fatura-deposu
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: muhasebe-grs-disk
+  resources:
+    requests:
+      storage: 5Gi
+---
+# 3. BÖLÜM: Zırhlandırılmış Web Uygulaması (Diske Bağlanmış Hali)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: muhasebe-web-deployment
+  namespace: default
+  labels:
+    app: muhasebe-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: muhasebe-web
+  template:
+    metadata:
+      labels:
+        app: muhasebe-web
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+      containers:
+      - name: web-container
+        image: mcr.microsoft.com/azuredocs/aci-helloworld:latest
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: fatura-alani
+          mountPath: /mnt/faturelar # Uygulama içeride bu klasöre dosya yazacak
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "64Mi"
+          limits:
+            cpu: "500m"
+            memory: "128Mi"
+      volumes:
+      - name: fatura-alani
+        persistentVolumeClaim:
+          claimName: muhasebe-fatura-deposu
+---
+# 4. BÖLÜM: Servis Giriş Kapısı
+apiVersion: v1
+kind: Service
+metadata:
+  name: muhasebe-web-service
+  namespace: default
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: muhasebe-web
+---
+# 5. BÖLÜM: İzleme Motoru (Metrics Server)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metrics-server
+  namespace: kube-system
+  labels:
+    k8s-app: metrics-server
+spec:
+  selector:
+    matchLabels:
+      k8s-app: metrics-server
+  template:
+    metadata:
+      labels:
+        k8s-app: metrics-server
+    spec:
+      containers:
+      - name: metrics-server
+        image: registry.k8s.io/metrics-server/metrics-server:v0.6.4
+        args:
+        - --cert-dir=/tmp
+        - --secure-port=4443
+        - --kubelet-insecure-tls
+        - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
+        resources:
+          requests:
+            cpu: 50m
+            memory: 50Mi
+          limits:
+            cpu: 100m
+            memory: 104Mi
