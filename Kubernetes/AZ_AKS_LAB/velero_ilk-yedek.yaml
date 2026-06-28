@@ -1,0 +1,8 @@
+apiVersion: velero.io/v1
+kind: Backup
+metadata:
+  name: muhasebe-sistem-yedegi
+  namespace: velero
+spec:
+  includedNamespaces:
+  - default # Sadece bizim muhasebe uygulamamızın odasını yedekliyoruz
