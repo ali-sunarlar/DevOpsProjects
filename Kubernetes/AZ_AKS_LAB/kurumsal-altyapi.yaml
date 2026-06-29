@@ -24,8 +24,11 @@ spec:
         - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
         resources:
           requests:
+            cpu: 50m       # CPU talebini düşürdük
+            memory: 50Mi   # RAM talebini 50 MB'a çektik
+          limits:
             cpu: 100m
-            memory: 200Mi
+            memory: 104Mi  # Sandbox'ın izin verdiği maksimum sınıra tam uyum sağladık!
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -45,7 +48,7 @@ spec:
         app: muhasebe-web
     spec:
       securityContext:
-        runAsNonRoot: true   # Siber güvenlik zırhımız devrede!
+        runAsNonRoot: true
         runAsUser: 1000
       containers:
       - name: web-container
