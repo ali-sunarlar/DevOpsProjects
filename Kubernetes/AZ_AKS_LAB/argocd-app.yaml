@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: muhasebe-gitops-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/KENDI_GITHUB_KULLANICI_ADIN/muhasebe-gitops.git # Kendi GitHub linkini yaz
+    targetRevision: HEAD
+    path: . # YAML dosyasının depodaki konumu (Ana dizin)
+  destination:
+    server: https://kubernetes.default.svc # Doğrudan kendi içine (AKS'e) kuracak
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true # Git'ten bir şey silinirse canlıdan da otomatik sil
+      selfHeal: true # Canlıda biri elini sürerse (değiştirirse) otomatik düzelt (GitOps Gücü!)
