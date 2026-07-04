@@ -1,0 +1,11 @@
+# Terraform lokal kalıntıları
+.terraform/
+.terraform.lock.hcl
+
+# State (Durum) dosyaları - Hassas veri içerir, repoya gitmemeli!
+*.tfstate
+*.tfstate.*
+
+# Geçici dosyalar ve loglar
+*.log
+crash.log
