@@ -55,11 +55,11 @@ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.pas
 Kubernetes'in yerleşik RollingUpdate mekanizması trafiği yüzdesel olarak bölemediği için (Örn: "Trafiğin sadece %10'u yeni sürüme gitsin" diyemeyiz), bu kısıtlamayı aşmak amacıyla Argo Rollouts entegrasyonu yapılmıştır. muhasebe-canary.yaml şablonu ile 4 replikalı bir yapıda kademeli sızma ve geçiş testi uygulanır.
 Kurumsal Canary Aşamaları:
 
-    %10 Aşaması (Güvenli Sızma): Gelen kullanıcı isteklerinin sadece %10'u yeni v2 sürümüne aktarılır. Sistem tam 1 dakika boyunca (pause: 1m) duraklayarak siber güvenlik ve yazılım ekiplerinin logları/hata kodlarını incelemesine izin verir.
+%10 Aşaması (Güvenli Sızma): Gelen kullanıcı isteklerinin sadece %10'u yeni v2 sürümüne aktarılır. Sistem tam 1 dakika boyunca (pause: 1m) duraklayarak siber güvenlik ve yazılım ekiplerinin logları/hata kodlarını incelemesine izin verir.
 
-    %50 Aşaması (Gözlem): Her şey kararlı ilerliyorsa trafik otomatik olarak yarı yarıya (%50) bölünür ve gözlem süreci devam eder.
+%50 Aşaması (Gözlem): Her şey kararlı ilerliyorsa trafik otomatik olarak yarı yarıya (%50) bölünür ve gözlem süreci devam eder.
 
-    %100 Aşaması (Final): Tam kararlılık sağlandığında eski v1 podları sistemden temizlenerek tüm kurumsal yük v2 sürümüne sıfır kesintiyle kaydırılır.
+%100 Aşaması (Final): Tam kararlılık sağlandığında eski v1 podları sistemden temizlenerek tüm kurumsal yük v2 sürümüne sıfır kesintiyle kaydırılır.
 
 ### Canary Test ve Sürüm Güncelleme Komutları:
 
