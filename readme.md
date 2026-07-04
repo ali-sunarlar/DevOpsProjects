@@ -22,6 +22,7 @@ Azure_ZeroTrust_K8s_Sandbox/
 
 ## 🚀 Dağıtım Adımları
 
+
 ### 1. Ön Gereksinimler
 - Bilgisayarınızda **Azure CLI** ve **Terraform** yüklü olmalıdır.
 - Terminalden Azure oturumu açılmış olmalıdır:
