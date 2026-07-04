@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: muhasebe-web-rollout
+  namespace: default
+spec:
+  replicas: 4 # Toplam 4 adet pod çalıştıracağız
+  strategy:
+    canary:
+      steps:
+      - setWeight: 10 # 1. ADIM: Trafiğin sadece %10'unu v2'ye gönder
+      - pause: { duration: 1m } # 1 dakika boyunca logları incelememiz için bekle
+      - setWeight: 50 # 2. ADIM: Sorun yoksa trafiği %50'ye çıkar
+      - pause: { duration: 1m } # 1 dakika daha gözlemle
+  selector:
+    matchLabels:
+      app: muhasebe-web
+  template:
+    metadata:
+      labels:
+        app: muhasebe-web
+    spec:
+      containers:
+      - name: web
+        image: nginx:1.25-alpine # Şu an çalışan kararlı v1 sürümümüz
+        ports:
+        - containerPort: 80
