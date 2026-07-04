@@ -55,3 +55,5 @@ kubectl apply -f kurumsal-altyapi.yaml
 ## 🔒 Güvenlik Notları
 - SQL Server yönetici şifresi laboratuvar ortamı için statik bırakılmıştır. Üretim (Production) ortamlarında bu şifrelerin **Azure Key Vault** üzerinden veya dinamik gizli anahtar yöntemleriyle beslenmesi gerekir.
 - Sağlayıcı (Provider) yetki kısıtlamalarını aşmak adına `resource_provider_registrations = "none"` ayarı aktif edilmiştir.
+
+
