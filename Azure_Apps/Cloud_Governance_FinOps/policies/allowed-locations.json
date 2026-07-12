@@ -1,0 +1,28 @@
+{
+  "properties": {
+    "displayName": "Secured-Cloud: Sadece Izin Verilen Bolgelerde Kaynak Ac",
+    "policyType": "Custom",
+    "mode": "Indexed",
+    "description": "Veri egemenligi ve regülasyonlar geregi kaynaklarin sadece Kuzey ve Bati Avrupa veri merkezlerinde acilmasini zorunlu kilar.",
+    "parameters": {
+      "allowedLocations": {
+        "type": "Array",
+        "metadata": {
+          "displayName": "Izin Verilen Lokasyonlar"
+        },
+        "defaultValue": ["westeurope", "northeurope"]
+      }
+    },
+    "policyRule": {
+      "if": {
+        "not": {
+          "field": "location",
+          "in": "[parameters('allowedLocations')]"
+        }
+      },
+      "then": {
+        "effect": "deny"
+      }
+    }
+  }
+}

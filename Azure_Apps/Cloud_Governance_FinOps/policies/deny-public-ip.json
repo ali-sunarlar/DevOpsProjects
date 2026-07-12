@@ -1,0 +1,18 @@
+{
+  "properties": {
+    "displayName": "Secured-Cloud: Public IP Kullanimini Yasakla",
+    "policyType": "Custom",
+    "mode": "All",
+    "description": "Siber guvenlik baseline kurallari geregi, uretim (Prod/Dev) ortamlarinda kaynaklarin internete dogrudan acilmasini (Public IP) engeller.",
+    "parameters": {},
+    "policyRule": {
+      "if": {
+        "field": "type",
+        "equals": "Microsoft.Network/publicIPAddresses"
+      },
+      "then": {
+        "effect": "deny"
+      }
+    }
+  }
+}
