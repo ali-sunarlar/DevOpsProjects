@@ -1,58 +1,76 @@
-# Azure PaaS Altyapısı ve Kurumsal Veri Mimarisi Labı
+# Azure PaaS Altyapisi ve Kurumsal Veri Mimarisi Labi
 ## 🚀 App Service, Cosmos DB & Key Vault ile Güvenli Kurumsal Mimari (Terraform IaC)
 
-Bu proje; kurumsal bulut standartlarında sunucu yönetimi (IaaS) yükünü tamamen ortadan kaldıran, kod ve veri odaklı modern bir **Azure PaaS (Platform as a Service)** mimarisinin Altyapı Kod Olarak (**IaC - Terraform**) inşa edilmesini içerir. 
+Bu proje; kurumsal bulut standartlarinda sunucu yönetimi (IaaS) yükünü tamamen ortadan kaldiran, kod ve veri odakli modern bir **Azure PaaS (Platform as a Service)** mimarisinin Altyapi Kod Olarak (**IaC - Terraform**) inşa edilmesini içerir. 
 
-Proje; siber güvenlik hardening protokollerini (**Key Vault Secrets Management**), küresel ölçekte veri katmanını (**Cosmos DB**) ve esnek Linux web barındırma modelini (**App Service**) tek bir güvenli ve entegre altyapıda birleştirir.
+kurumsal bulut standartlarinda sunucu yönetimi (IaaS) yükünü tamamen ortadan kaldiran, kod ve veri odakli modern bir **Azure PaaS (Platform as a Service)** mimarisinin Altyapi Kod Olarak (**IaC - Terraform**) inşa edilmesini içerir. 
+
+kurumsal bulut standartlarinda sunucu yönetimi (IaaS) yükünü tamamen ortadan kaldiran, kod ve veri odakli modern bir **Azure PaaS (Platform as a Service)** mimarisinin Altyapi Kod Olarak (**IaC - Terraform**) inşa edilmesini içerir. 
 
 ---
 
-## 🗺️ Mimari Genel Bakış & Güvenlik Matrisi
+## 🗺️ Mimari Genel Bakiş & Güvenlik Matrisi
 
-Proje, kurumsal ortamlarda penetration test bulgularını (Açık bağlantı dizeleri, hardcoded şifreler) önlemek amacıyla **Zero Trust** felsefesine uygun olarak tasarlanmıştır. Uygulama katmanı, veri tabanı şifrelerine asla doğrudan erişemez; tüm hassas veriler Key Vault arkasında izole edilir.
+Proje, kurumsal ortamlarda penetration test bulgularini (Açik bağlanti dizeleri, hardcoded şifreler) önlemek amaciyla **Zero Trust** felsefesine uygun olarak tasarlanmiştir. Uygulama katmani, veri tabani şifrelerine asla doğrudan erişemez; tüm hassas veriler Key Vault arkasinda izole edilir.
+
+* **Kimlik Zirhi:** Web App, **System-Assigned Managed Identity** kullanarak Azure Entra ID üzerinde şifresiz bir siber kimliğe kavuşur.
+* **Ağ Zirhi:** Key Vault ve Cosmos DB servislerinin kamusal internet kapilari mühürlenmiştir. Servisler, **Private Endpoint** teknolojisi ile sanal ağ (VNet) içerisinde yerel IP'lere (`10.0.1.x`) dönüştürülmüştür. Web App ise **VNet Integration** köprüsüyle bu izole ağin içine gömülmüştür.
 
 
+### 🏗️ Kullanilan Azure Bileşenleri ve Detaylari
 
-### 🏗️ Kullanılan Azure Bileşenleri ve Detayları
-
-| Kaynak Tipi | Azure Servis Adı | Yapılandırma / SKU / Detaylar | Güvenlik / Ölçekleme Rolü |
+| Kaynak Tipi | Azure Servis Adi | Yapilandirma / SKU / Detaylar | Güvenlik / Ölçekleme Rolü |
 | :--- | :--- | :--- | :--- |
-| **Resource Group** | `azurerm_resource_group` | `1-fbf104d2-playground-sandbox` | Lab sınırlandırma ve kaynak yönetimi. |
-| **Web Infrastructure** | `azurerm_linux_web_app` | Service Plan: `Standard_B1` (.NET 8.0 / Node.js) | Esnek, auto-scale uyumlu web barındırma katmanı. |
-| **NoSQL Data Layer** | `azurerm_cosmosdb_account` | API: `SQL (Core)`, Tutarlılık: `Session` | Küresel ölçeklenebilir, düşük gecikmeli veri tabanı. |
-| **Security Vault** | `azurerm_key_vault` | SKU: `Standard`, Access Policies Enabled | Bağlantı dizelerinin (Connection Strings) sızmasını önleyen güvenli kasa. |
+| **Dinamik RG** | `azurerm_resource_group` | `.tfvars` üzerinden beslenir | Lab değişimlerinde tek merkezden yönetim. |
+| **Web Infrastructure** | `azurerm_linux_web_app` | Service Plan: `B1` (Linux / .NET 8.0) | VNet Integration entegreli, şifresiz kimlikli web katmani. |
+| **NoSQL Data Layer** | `azurerm_cosmosdb_account` | API: `SQL (Core)`, Tutarlilik: `Session` | Küresel ölçeklenebilir, düşük gecikmeli izole veri tabani. |
+| **Security Vault** | `azurerm_key_vault` | SKU: `Standard`, `random_id` Suffix | Küresel isim çakişmalarini (`VaultAlreadyExists`) engelleyen dinamik kasa. |
+| **Sanal Ağ (VNet)** | `azurerm_virtual_network` | `10.0.0.0/16` (2 Subnet ayrilmiş) | Tüm PaaS dünyasini internetten koparip gömdüğümüz siber kale. |
 
 ---
 
-## ⚙️ Topoloji Detayları (Variables & Hardening)
+## ⚙️ Topoloji Detaylari (Variables & Hardening)
 
-* **Hedef Bölge (Region):** `southcentralus` (Güney Merkez ABD - Kararlı Kurumsal Politikalarla Uyumlu Bölge)
-* **Secret Yönetimi:** Cosmos DB anahtarları (`primary_key`) ve endpoint bilgileri, Terraform dağıtımı esnasında otomatik olarak yakalanıp **Azure Key Vault Secret** olarak mühürlenir. Uygulama katmanı bu verileri çalışma zamanında (Runtime) güvenli çevre değişkenleri üzerinden çeker.
+* **Hedef Bölge (Region):** `southcentralus` (Güney Merkez ABD - Kararli Kurumsal Politikalarla Uyumlu Bölge)
+* **Secret Yönetimi:** Cosmos DB anahtarlari (`primary_key`) ve endpoint bilgileri, Terraform dağitimi esnasinda otomatik olarak yakalanip **Azure Key Vault Secret** olarak mühürlenir. Uygulama katmani bu verileri çalişma zamaninda (Runtime) güvenli çevre değişkenleri üzerinden çeker.
 
 ---
 
-## 🚀 Kurulum ve Dağıtım Adımları
+## ⚙️ Dinamik Topoloji Yönetimi (Variables & Parametreler)
 
-Lokal terminaliniz üzerinden Azure CLI (`az login`) ile sandbox hesabınıza giriş yaptıktan sonra, proje klasöründe sırasıyla şu Terraform operasyon zincirini işletin:
+Proje, hardcoded (statik) değerlerden tamamen arindirilmiştir. Lab ortamlarinda sürekli değişen kaynak grubu adlari ve bölgeler için **Merkezi Değişken Mimarisi** kullanilir.
 
-### 1. Altyapıyı Başlatma ve Sağlayıcı Kurulumu
-Terraform sağlayıcılarını (AzureRM), kütüphanelerini ve state mekanizmasını initialize edin:
+* **Parametre Yönetimi (`terraform.tfvars`):** Lab her değiştiğinde sadece bu dosya güncellenir:
+  ```hcl
+  rg_name  = "1-508cbdb2-playground-sandbox"
+  location = "southcentralus"
+
+## 🚀 Kurulum ve Dağitim Adimlari
+
+Lokal terminaliniz üzerinden Azure CLI (`az login`) ile sandbox hesabiniza giriş yaptiktan sonra, proje klasöründe sirasiyla şu Terraform operasyon zincirini işletin:
+
+### 1. Altyapiyi Başlatma ve Sağlayici Kurulumu
+Terraform sağlayicilarini (AzureRM, Random), kütüphanelerini ve state mekanizmasini initialize edin:
 ```bash
+# Eski lab state kalintilari varsa temizleyin
+rm -f terraform.tfstate terraform.tfstate.backup
+
+# Projeyi başlatin
 terraform init
 ```
 
-### 2. Değişiklik Haritasının Doğrulanması (Planlama)
+### 2. Değişiklik Haritasinin Doğrulanmasi (Planlama)
 
-Mevcut Azure altyapısı ile kod arasındaki farkı analiz edin, oluşturulacak kaynakları ve bağımlılıkları doğrulayın:
+Merkezi ``terraform.tfvars`` dosyasindaki güncel lab parametrelerine göre altyapi bağimlilik ağacini doğrulayin:
 
 ```bash
 terraform plan
 ``` 
 
 
-### 3. Dağıtımın Canlı Ortama Fırlatılması (Execution)
+### 3. Dağitimin Canli Ortama Firlatilmasi (Execution)
 
-Altyapıyı onay gerektirmeden, bağımlılık sırasına (Dependency Tree) göre doğrudan Azure bulutuna fırlatın:
+Altyapiyi onay gerektirmeden, bağimlilik sirasina (Dependency Tree) göre doğrudan Azure bulutuna firlatin:
 
 ```bash
 terraform apply -auto-approve
