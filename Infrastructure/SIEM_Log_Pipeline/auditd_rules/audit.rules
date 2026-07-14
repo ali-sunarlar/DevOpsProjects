@@ -1,0 +1,19 @@
+# 1. Mevcut tüm audit kurallarını temizle
+-D
+
+# 2. Kernel tampon bellek boyutunu ayarla
+-b 8192
+
+# 3. Kritik sistem dosyalarının manipülasyonunu izle (Key: identity)
+-w /etc/group -p wa -k identity
+-w /etc/passwd -p wa -k identity
+-w /etc/shadow -p wa -k identity
+-w /etc/sudoers -p wa -k identity
+
+# 4. Sudo ve yetki yükseltme (Privilege Escalation) komutlarını izle (Key: priv_esc)
+-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -k priv_esc
+-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k priv_esc
+
+# 5. Başarısız dosya erişim denemelerini (Yetkisiz okuma girişimleri) izle (Key: unauthorized_access)
+-a always,exit -F arch=b64 -S open,creat,truncate,ftruncate,openat -F exit=-EACCES -k unauthorized_access
+-a always,exit -F arch=b64 -S open,creat,truncate,ftruncate,openat -F exit=-EPERM -k unauthorized_access
