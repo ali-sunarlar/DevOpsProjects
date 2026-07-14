@@ -26,3 +26,23 @@ terraform plan
 # 3. Canlıya fırlatın
 terraform apply -auto-approve
 ```
+
+
+### Azure CLI üzerinden Kontroller
+
+Terminalinden bu siber hattın durumunu sorgulamak için şu komutları koşturabilirsin:
+
+# 1. Service Bus Kuyruk detaylarını ve bekleyen mesaj sayısını terminale dök
+az servicebus queue show \
+  --resource-group "1-de0c7353-playground-sandbox" \
+  --namespace-name "muhasebe-otomasyon-bus" \
+  --name "siparis-kuyrugu" \
+  --query "{Name:name, MessageCount:messageCount, SizeInBytes:sizeInBytes}" \
+  --output table
+
+# 2. Azure Function App'in şu an çalışır (Running) durumda olup olmadığını kontrol et
+az functionapp show \
+  --resource-group "1-de0c7353-playground-sandbox" \
+  --name "stok-guncelleyici-function" \
+  --query "state" \
+  --output tsv
