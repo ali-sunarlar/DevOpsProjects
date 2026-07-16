@@ -1,0 +1,1 @@
+rg_name = "1-a0672365-playground-sandbox" # Güncel RG adını buraya yaz
