@@ -1,0 +1,14 @@
+apiVersion: telemetry.istio.io/v1alpha1
+kind: Telemetry
+metadata:
+  name: mesh-default-tracing
+  namespace: istio-system
+spec:
+  tracing:
+  - providers:
+    - name: "zipkin" # Jaeger varsayılan Zipkin API endpoint'ini dinler
+    customTags:
+      environment:
+        literal:
+          value: "production"
+    randomSamplingPercentage: 100.0 # Lab ortamında tüm istekleri logla (Prod'da %1-%5 arası önerilir)

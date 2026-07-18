@@ -1,0 +1,18 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: payment-ingress-restriction
+  namespace: prod-apps
+spec:
+  selector:
+    matchLabels:
+      app: payment-service
+  action: ALLOW # Sadece aşağıdaki kurallara uyan trafiğe izin ver
+  rules:
+  - from:
+    - source:
+        principals: ["cluster.local/ns/prod-apps/sa/order-service-sa"]
+    to:
+    - operation:
+        methods: ["POST"]
+        paths: ["/v1/charge"]
